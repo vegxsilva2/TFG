@@ -15,6 +15,7 @@ ament-pep257==0.12.12
 ament-uncrustify==0.12.12
 ament-xmllint==0.12.12
 angles==1.15.0
+annotated-types==0.7.0
 anyio==4.6.0
 appdirs==1.4.4
 apturl==0.5.2
@@ -127,6 +128,7 @@ isoduration==20.11.0
 jedi==0.19.1
 jeepney==0.7.1
 Jinja2==3.1.4
+jiter==0.9.0
 json5==0.9.25
 jsonpointer==3.0.0
 jsonschema==4.23.0
@@ -186,6 +188,7 @@ notify2==0.3
 numpy==1.21.5
 oauthlib==3.2.0
 olefile==0.46
+openai==1.76.0
 osrf-pycommon==2.1.6
 overrides==7.7.0
 packaging==24.1
@@ -211,6 +214,8 @@ pycodestyle==2.8.0
 pycparser==2.22
 pycryptodome==3.20.0
 pycups==2.0.1
+pydantic==2.11.3
+pydantic_core==2.33.1
 pydocstyle==6.1.1
 pydot==1.4.2
 pyflakes==2.4.0
@@ -339,10 +344,12 @@ toml==0.10.2
 tomli==2.0.1
 topic-monitor==0.20.5
 tornado==6.4.1
+tqdm==4.67.1
 traitlets==5.14.3
 trajectory-msgs==4.8.0
 turtlesim==1.4.2
 types-python-dateutil==2.9.0.20240906
+typing-inspection==0.4.0
 typing_extensions==4.12.2
 ubuntu-drivers-common==0.0.0
 ubuntu-pro-client==8001
