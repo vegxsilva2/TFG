@@ -2,10 +2,13 @@ import json
 import re
 import pyshark
 from datetime import datetime, timezone
+from pathlib import Path
 
-REPORT_PATH = "../input/report.txt"
-PCAP_PATH = "../input/capture@eth1.pcap"
-OUTPUT_PATH = "../output/filtered_packets.json"
+BASE_DIR = Path(__file__).resolve().parent
+REPORT_PATH = BASE_DIR / "../input/report.txt"
+PCAP_PATH = BASE_DIR / "../input/capture@eth1.pcap"
+EXPLOITS_OUTPUT_PATH = BASE_DIR / "../output/exploits_output.json"
+PACKETS_OUTPUT_PATH = BASE_DIR / "../output/filtered_packets2.json"
 
 def parse_report(path):
     
@@ -40,8 +43,8 @@ def parse_report(path):
                 }
                 timestamps = entry.get("timestamp", [])
                 if len(timestamps) == 2:
-                    exploit_info["start_timestamp"] = datetime.fromisoformat(timestamps[0])
-                    exploit_info["end_timestamp"] = datetime.fromisoformat(timestamps[1])
+                    exploit_info["start_timestamp"] = datetime.fromisoformat(timestamps[0]).replace(tzinfo=timezone.utc)
+                    exploit_info["end_timestamp"] = datetime.fromisoformat(timestamps[1]).replace(tzinfo=timezone.utc)
                 exploits.append(exploit_info)
 
         #Procesar warnigns
@@ -58,11 +61,12 @@ def parse_report(path):
                 }
                 timestamps = entry.get("timestamp", [])
                 if len(timestamps) == 2:
-                    exploit_info["start_timestamp"] = datetime.fromisoformat(timestamps[0])
-                    exploit_info["end_timestamp"] = datetime.fromisoformat(timestamps[1])
+                    exploit_info["start_timestamp"] = datetime.fromisoformat(timestamps[0]).replace(tzinfo=timezone.utc)
+                    exploit_info["end_timestamp"] = datetime.fromisoformat(timestamps[1]).replace(tzinfo=timezone.utc)
+
                 exploits.append(exploit_info)        
 
-    with open(OUTPUT_PATH, "w") as f:
+    with open(EXPLOITS_OUTPUT_PATH, "w") as f:
         json.dump(exploits, f, indent=2, default=str)
 
     return exploits
@@ -78,37 +82,151 @@ def filter_exploits_by_source(exploits, allowed_sources=["vulnerability"]):
     """
     return [e for e in exploits if e.get("source") in allowed_sources]
 
+def report_timestamps(exploits):
+    timestamps = [(e["start_timestamp"], e["end_timestamp"]) for e in exploits if "start_timestamp" in e and "end_timestamp" in e]
+    print(timestamps)
+    return timestamps
 
-def filter_packets(pcap_path, time_windows):
+def group_packets_by_windows(pcap_path, time_windows=None):
+    import pyshark
+    from datetime import datetime, timezone
+    import json
+
     cap = pyshark.FileCapture(pcap_path, keep_packets=False)
-    filtered = []
+    packets = []
+
+    # Convertimos ventanas de tiempo a UTC
+    parsed_windows = []
+    if time_windows:
+        for start, end in time_windows:
+            if isinstance(start, str):
+                start = datetime.fromisoformat(start).replace(tzinfo=timezone.utc)
+            else:
+                start = start.replace(tzinfo=timezone.utc)
+
+            if isinstance(end, str):
+                end = datetime.fromisoformat(end).replace(tzinfo=timezone.utc)
+            else:
+                end = end.replace(tzinfo=timezone.utc)
+
+            parsed_windows.append((start, end))
+        time_windows = parsed_windows
 
     for pkt in cap:
         try:
             pkt_time = datetime.fromtimestamp(float(pkt.sniff_timestamp), tz=timezone.utc)
+
+            matching_window = None
             for start, end in time_windows:
                 if start <= pkt_time <= end:
-                    filtered.append({
-                        "time": pkt.sniff_time.isoformat(),
-                        "src": pkt.ip.src if hasattr(pkt, 'ip') else None,
-                        "dst": pkt.ip.dst if hasattr(pkt, 'ip') else None,
-                        "proto": pkt.transport_layer if hasattr(pkt, 'transport_layer') else None,
-                        "sport": pkt[pkt.transport_layer].srcport if hasattr(pkt, 'transport_layer') else None,
-                        "dport": pkt[pkt.transport_layer].dstport if hasattr(pkt, 'transport_layer') else None,
-                        "payload": str(pkt.layers[-1])[:200]
-                    })
-                    break
+                    matching_window = {"start": start.isoformat(), "end": end.isoformat()}
+                    break  # basta con la primera coincidencia
+
+            if not matching_window:
+                continue  # el paquete no pertenece a ninguna ventana
+
+            pkt_dict = {
+                "timestamp": pkt_time.isoformat(),
+                "window": matching_window,
+                "layers": {}
+            }
+
+            for layer in pkt.layers:
+                layer_name = layer.layer_name
+                pkt_dict["layers"][layer_name] = {}
+
+                for field_name in layer.field_names:
+                    try:
+                        value = getattr(layer, field_name)
+                        pkt_dict["layers"][layer_name][field_name] = value
+                    except AttributeError:
+                        continue
+
+            packets.append(pkt_dict)
+
+        except Exception as e:
+            print(f"Error processing packet: {e}")
+            continue
+
+    cap.close()
+
+    with open(PACKETS_OUTPUT_PATH, "w") as f:
+        json.dump(packets, f, indent=2, default=str)
+
+    return packets
+
+def validate_filtered_packets(packet_json_path, time_windows):
+    with open(packet_json_path, "r") as f:
+        packets = json.load(f)
+
+    total = len(packets)
+    passed = 0
+    failed = 0
+
+    for pkt in packets:
+        pkt_time = datetime.fromisoformat(pkt["timestamp"])  # ISO 8601 con tzinfo
+
+        if any(start <= pkt_time <= end for start, end in time_windows):
+            passed += 1
+        else:
+            failed += 1
+            print(f"❌ Paquete fuera de rango: {pkt_time.isoformat()}")
+
+    print(f"\n✅ Paquetes en rango: {passed}")
+    print(f"❌ Paquetes fuera de rango: {failed}")
+    print(f"📦 Total en archivo: {total}")
+
+    assert failed == 0, "Hay paquetes que no cumplen las ventanas de tiempo."
+
+    return passed, failed
+
+def count_all_packets_in_windows(pcap_path, time_windows):
+    cap = pyshark.FileCapture(pcap_path, keep_packets=False)
+    count = 0
+    first_match_time = None
+    last_match_time = None
+
+    for pkt in cap:
+        try:
+            pkt_time = datetime.fromtimestamp(float(pkt.sniff_timestamp), tz=timezone.utc)
+
+            if any(start <= pkt_time <= end for start, end in time_windows):
+                count += 1
+                if first_match_time is None:
+                    first_match_time = pkt_time
+                last_match_time = pkt_time
+
         except Exception:
             continue
+
     cap.close()
-    return filtered
+
+    print(f"\n🔍 Total paquetes en ventanas (raw .pcap): {count}")
+    if first_match_time:
+        print(f"⏱ Primer paquete en ventana: {first_match_time}")
+        print(f"⏱ Último paquete en ventana: {last_match_time}")
+
+    return count
 
 def process_data():
     exploits = parse_report(REPORT_PATH)
-    time_windows = [(e["start_timestamp"], e["end_timestamp"]) for e in exploits if "start_timestamp" in e and "end_timestamp" in e]
-    filtered_packets = filter_packets(PCAP_PATH, time_windows)
+    time_windows = report_timestamps(exploits)
+    print(time_windows)
+    grouped_packets = group_packets_by_windows(PCAP_PATH, time_windows)
 
-    with open(OUTPUT_PATH, "w") as f:
-        json.dump(filtered_packets, f, indent=2)
 
-    print(f"\n🔎 Preprocesamiento completado. Paquetes filtrados guardados en {OUTPUT_PATH}")
+    print(f"\n🔎 Preprocesamiento completado. Paquetes filtrados guardados en {EXPLOITS_OUTPUT_PATH} y en {PACKETS_OUTPUT_PATH}")
+
+    """
+    # Validación
+    print("\n🧪 Validando paquetes filtrados...")
+    validate_filtered_packets(PACKETS_OUTPUT_PATH, time_windows)
+    
+    print("\n📊 Comprobando si se han perdido paquetes en el filtrado...")
+    total_in_pcap = count_all_packets_in_windows(PCAP_PATH, time_windows)
+
+    if total_in_pcap != len(filtered_packets):
+        print(f"⚠️ Atención: se esperaban {total_in_pcap} paquetes pero solo se guardaron {len(filtered_packets)}.")
+    else:
+        print("✅ Todos los paquetes de las ventanas han sido guardados.")
+    """
