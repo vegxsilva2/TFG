@@ -3,12 +3,15 @@ import re
 import pyshark
 from datetime import datetime, timezone
 from pathlib import Path
+from collections import Counter, defaultdict 
+
 
 BASE_DIR = Path(__file__).resolve().parent
 REPORT_PATH = BASE_DIR / "../input/report.txt"
 PCAP_PATH = BASE_DIR / "../input/capture@eth1.pcap"
 EXPLOITS_OUTPUT_PATH = BASE_DIR / "../output/exploits_output.json"
 PACKETS_OUTPUT_PATH = BASE_DIR / "../output/filtered_packets.json"
+FILTERED_PACKETS_OUTPUT_PATH = BASE_DIR / "../output/refined_packets.json"
 
 def parse_report(path):
     
@@ -75,6 +78,7 @@ def parse_report(path):
 def filter_exploits_by_source(exploits, allowed_sources=["vulnerability"]):
     """
     Filtra los exploits por su fuente (source).
+    Por si solo nos interesa ver las vulnerability y no los warnings
     
     :param exploits: Lista de exploits procesados.
     :param allowed_sources: Lista de tipos de source permitidos ("vulnerability", "warning").
@@ -83,8 +87,20 @@ def filter_exploits_by_source(exploits, allowed_sources=["vulnerability"]):
     return [e for e in exploits if e.get("source") in allowed_sources]
 
 def report_timestamps(exploits):
-    timestamps = [(e["start_timestamp"], e["end_timestamp"]) for e in exploits if "start_timestamp" in e and "end_timestamp" in e]
-    print(timestamps)
+    """
+    Extrae las ventanas temporales (start, end) de los exploits procesados.
+
+    Parámetros:
+        exploits (list): Lista de exploits con campos 'start_timestamp' y 'end_timestamp'.
+
+    Devuelve:
+        list: Lista de tuplas (start_timestamp, end_timestamp) presentes en los exploits.
+    """
+    timestamps = [
+        (e["start_timestamp"], e["end_timestamp"])
+        for e in exploits
+        if "start_timestamp" in e and "end_timestamp" in e
+    ]
     return timestamps
 
 def normalize_time_windows(time_windows):
@@ -160,7 +176,7 @@ def extract_packet_dict(pkt, pkt_time, matched_window):
 
     return pkt_dict
 
-def group_packets_by_windows(pcap_path, time_windows=None):
+def packets_extraction(pcap_path, time_windows=None):
     """
     Filtra un archivo .pcap por ventanas temporales y extrae paquetes enriquecidos con metadatos.
 
@@ -197,6 +213,125 @@ def group_packets_by_windows(pcap_path, time_windows=None):
         json.dump(packets, f, indent=2, default=str)
 
     return packets
+
+def group_packets_by_window(packets):
+    """
+    Agrupa los paquetes por ventana temporal (start, end).
+
+    Parámetros:
+        packets (list): Lista de paquetes JSON.
+
+    Devuelve:
+        dict: Diccionario con clave (start, end) → lista de paquetes.
+    """
+    grouped = defaultdict(list)
+
+    for pkt in packets:
+        window = pkt.get("window")
+        if window:
+            start = window["start"]
+            end = window["end"]
+            grouped[(start, end)].append(pkt)
+
+    return grouped
+
+def extract_ip_frequencies(packets):
+    """
+    Extrae y cuenta las IPs src y dst de cada paquete.
+
+    Parámetros:
+        packets (list): Lista de paquetes en una ventana.
+
+    Devuelve:
+        Counter: Conteo total de IPs origen y destino.
+    """
+    ip_counter = Counter()
+
+    for pkt in packets:
+        layers = pkt.get("layers", {})
+        ip_layer = layers.get("ip", {})
+        src = ip_layer.get("src")
+        dst = ip_layer.get("dst")
+
+        if src:
+            ip_counter[src] += 1
+        if dst:
+            ip_counter[dst] += 1
+
+    return ip_counter
+
+def select_main_ips(ip_counter, top_n=2):
+    """
+    Selecciona las IPs más frecuentes como candidatas principales del exploit.
+
+    Parámetros:
+        ip_counter (Counter): Conteo de IPs.
+        top_n (int): Número de IPs a conservar.
+
+    Devuelve:
+        set: IPs más frecuentes (top N).
+    """
+    return set(ip for ip, _ in ip_counter.most_common(top_n))
+
+
+def filter_packets_by_ip_and_protocol(packets, allowed_ips):
+    """
+    Elimina paquetes que no tengan IP o que no estén relacionados con las IPs relevantes.
+
+    Parámetros:
+        packets (list): Lista de paquetes.
+        allowed_ips (set): IPs consideradas relacionadas con el exploit.
+
+    Devuelve:
+        list: Paquetes filtrados.
+    """
+    filtered = []
+
+    for pkt in packets:
+        layers = pkt.get("layers", {})
+
+        if "ip" not in layers:
+            continue  # sin IP, fuera
+
+        ip_layer = layers["ip"]
+        src = ip_layer.get("src")
+        dst = ip_layer.get("dst")
+
+        if src in allowed_ips or dst in allowed_ips:
+            filtered.append(pkt)
+
+    return filtered
+
+def refine_packets(packets, top_n_ips=2):
+    """
+    Refina la lista de paquetes para eliminar ruido no relacionado con los exploits.
+
+    - Agrupa por ventana temporal
+    - Detecta IPs dominantes por ventana
+    - Filtra paquetes que no involucren esas IPs
+
+    Parámetros:
+        packets (list): Lista de paquetes enriquecidos con 'window'.
+        top_n_ips (int): Número de IPs dominantes a conservar por ventana.
+
+    Devuelve:
+        list: Lista de paquetes refinados.
+    """
+    refined = []
+    grouped = group_packets_by_window(packets)
+
+    for (start, end), pkts in grouped.items():
+        ip_counts = extract_ip_frequencies(pkts)
+        dominant_ips = select_main_ips(ip_counts, top_n=top_n_ips)
+        filtered = filter_packets_by_ip_and_protocol(pkts, dominant_ips)
+        refined.extend(filtered)
+
+    with open(FILTERED_PACKETS_OUTPUT_PATH, "w") as f:
+        json.dump(refined, f, indent=2, default=str)
+
+    return refined
+
+#---------------------------------------------------------------------------------------------------------------
 
 def validate_filtered_packets(packet_json_path, time_windows):
     with open(packet_json_path, "r") as f:
@@ -254,8 +389,8 @@ def count_all_packets_in_windows(pcap_path, time_windows):
 def process_data():
     exploits = parse_report(REPORT_PATH)
     time_windows = report_timestamps(exploits)
-    print(time_windows)
-    grouped_packets = group_packets_by_windows(PCAP_PATH, time_windows)
+    packets = packets_extraction(PCAP_PATH, time_windows)
+    refined_packets = refine_packets(packets)
 
 
     print(f"\n🔎 Preprocesamiento completado. Paquetes filtrados guardados en {EXPLOITS_OUTPUT_PATH} y en {PACKETS_OUTPUT_PATH}")
