@@ -5,15 +5,18 @@ import os
 from datetime import datetime, timezone
 
 #Refinado el promt para obtener el output deseado -> DONE
-#Decidir si es necesario enviar todos los paquetes por exploit al LLM (aporta esto información extra?) -> TBD
-#Obtener el resultado para un exploit basándome en el número de paquetes decidido en la task anterior -> TBD
+#Decidir si es necesario enviar todos los paquetes por exploit al LLM (aporta esto información extra?) -> DONE
+#   Solucion -> Coger 5 (o los que queramos) paquetes por exploit que sean lo más significativos y menos redundantes posible
+#Obtener el resultado para un exploit basándome en el número de paquetes decidido en la task anterior -> DONE
 #Obtener el resultado para todos los exploits -> TBD
 
 # Paths
 BASE_DIR = Path(__file__).resolve().parent
 EXPLOITS_INPUT_PATH = BASE_DIR / "../output/exploits_output.json"
-PACKETS_INPUT_PATH = BASE_DIR / "../output/refined_packets.json"
-IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit.json"
+#PACKETS_INPUT_PATH = BASE_DIR / "../output/refined_packets.json"
+PACKETS_INPUT_PATH = BASE_DIR / "../output/refined_packets2.json"
+#IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit.json"
+IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit2.json"
 
 # API Key. Algun dia lo pondré por variable de entorno pero hoy no va a ser
 OPENAI_API_KEY = "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"
@@ -52,7 +55,7 @@ def match_packets_to_exploit(exploit, packets):
 
     return matched
 
-def build_prompt(exploit, packet):
+def build_analysis_prompt(exploit, packet):
     """
     Construye un prompt detallado para el LLM siguiendo estructura basada en plantilla.
     """
@@ -92,9 +95,38 @@ OUTPUT FORMAT (in JSON):
 """
     return prompt_template
 
+def build_summary_prompt(exploit, iocs_por_paquete):
+    """
+    Construye un prompt para que el LLM genere un resumen técnico global del exploit
+    basándose en los IoCs obtenidos por cada paquete.
+    """
+    prompt_template = f"""
+ROLE: Cybersecurity analyst.
+TASK: Based on the following Indicators of Compromise (IoCs) extracted from different network packets related to a single exploit, generate a technical summary of the exploit activity.
+NOTES:
+ - Do NOT include general explanations or recommendations.
+ - Focus only on what the data reveals.
+ - Summarize the attack pattern: relevant IPs, ports, payloads, tools, goals, etc.
+ - Output ONLY a concise JSON object like:
+ {{
+   "resumen": "Breve resumen técnico del comportamiento del exploit en base a los datos previos."
+ }}
+
+EXPLOIT:
+- ID: {exploit.get("id", "N/A")}
+- CVE: {exploit.get("cve", "")}
+- Payload: {exploit.get("payload", "")}
+- Shell Type: {exploit.get("shell_type", "")}
+- Time Window: {exploit.get("start_timestamp")} → {exploit.get("end_timestamp")}
+
+IoCs extraídos por paquete:
+{json.dumps(iocs_por_paquete, indent=2)}
+"""
+    return prompt_template
+
 def analyze_exploits_with_llm(exploits, packets):
     """
-    Ejecuta el análisis de IoCs para cada exploit y sus paquetes relacionados.
+    Ejecuta el análisis de IoCs por paquete y un resumen técnico por exploit.
     """
     results = []
 
@@ -104,9 +136,10 @@ def analyze_exploits_with_llm(exploits, packets):
             continue
         
         exploit_results = []
+        solo_iocs = []
+
         for packet in matched_packets:
-            
-            prompt = build_prompt(exploit, packet)
+            prompt = build_analysis_prompt(exploit, packet)
 
             response = client.chat.completions.create(
                 model="gpt-4",
@@ -128,23 +161,35 @@ def analyze_exploits_with_llm(exploits, packets):
                 "iocs": parsed
             })
 
-            print("################")
-            print("Para el paquete")
-            print(packet)
-            #Solo primera iteración para debugear
-            break
+            solo_iocs.append(parsed)  # Para usar luego en el resumen
+
+        # 🔍 Llamada al LLM para generar resumen del exploit
+        summary_prompt = build_summary_prompt(exploit, solo_iocs)
+        summary_response = client.chat.completions.create(
+            model="gpt-4",
+            messages=[
+                {"role": "system", "content": "Eres un experto analista de ciberseguridad."},
+                {"role": "user", "content": summary_prompt}
+            ],
+            temperature=0.2,
+            max_tokens=200
+        )
+
+        try:
+            resumen_exploit = json.loads(summary_response.choices[0].message.content)
+        except json.JSONDecodeError:
+            resumen_exploit = {"resumen": summary_response.choices[0].message.content}
 
         results.append({
             "exploit_id": exploit.get("id") or exploit.get("cve"),
             "exploit_metadata": exploit,
-            "iocs": exploit_results
+            "iocs": exploit_results,
+            "resumen_exploit": resumen_exploit
         })
 
-        print("RESULTADOS DEL TODOPODEROSO")
-        print("############################")
-        print(results)
-        #Solo primera iteración para debugear
+        # Debug: Solo procesamos un exploit por ahora
         break
+
     return results
 
 def save_json(data, path):

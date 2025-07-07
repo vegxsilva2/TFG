@@ -12,6 +12,7 @@ PCAP_PATH = BASE_DIR / "../input/capture@eth1.pcap"
 EXPLOITS_OUTPUT_PATH = BASE_DIR / "../output/exploits_output.json"
 PACKETS_OUTPUT_PATH = BASE_DIR / "../output/filtered_packets.json"
 FILTERED_PACKETS_OUTPUT_PATH = BASE_DIR / "../output/refined_packets.json"
+FILTERED_PACKETS2_OUTPUT_PATH = BASE_DIR / "../output/refined_packets2.json"
 
 def parse_report(path):
     
@@ -302,7 +303,74 @@ def filter_packets_by_ip_and_protocol(packets, allowed_ips):
 
     return filtered
 
-def refine_packets(packets, top_n_ips=2):
+def select_representative_packets(packets, max_packets):
+    """
+    Selecciona un subconjunto representativo de paquetes dentro de un grupo filtrado.
+    
+    Objetivo:
+        Reducir el número total de paquetes a analizar sin perder diversidad informativa.
+        Se priorizan paquetes que:
+          - Usan protocolos distintos (ej. TCP, UDP, DNS, HTTP, SMB...)
+          - Utilizan puertos no estándar (potencialmente sospechosos)
+          - Son los primeros en aparecer (en caso de que falten paquetes para completar el máximo)
+
+    Estrategia:
+        1. Se seleccionan paquetes con combinaciones de protocolos únicas, para representar distintas capas vistas en la sesión.
+        2. Se priorizan paquetes con destino a puertos no comunes (fuera de los típicos de servicios legítimos como HTTP, DNS, FTP...).
+        3. Si aún no se alcanza el número deseado de paquetes, se completan con los primeros paquetes no seleccionados del grupo.
+
+    Parámetros:
+        packets (list): Lista de paquetes ya filtrados por ventana e IPs dominantes.
+        max_packets (int): Número máximo de paquetes a conservar.
+
+    Devuelve:
+        list: Lista de paquetes seleccionados para análisis semántico.
+    """
+    COMMON_PORTS = {
+        "20",  # FTP data
+        "21",  # FTP control
+        "22",  # SSH
+        "23",  # Telnet
+        "25",  # SMTP
+        "53",  # DNS
+        "80",  # HTTP
+        "110", # POP3
+        "143", # IMAP
+        "443", # HTTPS
+    }
+
+    selected = []
+    seen_combinations = set()
+
+    # 1. Selección por combinación única de protocolos
+    for pkt in packets:
+        layers = tuple(pkt.get("layers", {}).keys())
+        if layers not in seen_combinations:
+            seen_combinations.add(layers)
+            selected.append(pkt)
+            if len(selected) >= max_packets:
+                return selected
+
+    # 2. Selección por puerto destino no común
+    for pkt in packets:
+        layers = pkt.get("layers", {})
+        dst_port = layers.get("tcp", {}).get("dstport") or layers.get("udp", {}).get("dstport")
+
+        if dst_port and dst_port not in COMMON_PORTS and pkt not in selected:
+            selected.append(pkt)
+            if len(selected) >= max_packets:
+                return selected
+
+    # 3. Completar con los primeros paquetes restantes
+    for pkt in packets:
+        if pkt not in selected:
+            selected.append(pkt)
+            if len(selected) >= max_packets:
+                break
+
+    return selected
+
+def refine_packets(packets, top_n_ips=2,max_packets_per_window=5):
     """
     Refina la lista de paquetes para eliminar ruido no relacionado con los exploits.
 
@@ -324,15 +392,17 @@ def refine_packets(packets, top_n_ips=2):
         ip_counts = extract_ip_frequencies(pkts)
         dominant_ips = select_main_ips(ip_counts, top_n=top_n_ips)
         filtered = filter_packets_by_ip_and_protocol(pkts, dominant_ips)
-        refined.extend(filtered)
+        representative = select_representative_packets(filtered, max_packets=max_packets_per_window)
+        refined.extend(representative)
 
-    with open(FILTERED_PACKETS_OUTPUT_PATH, "w") as f:
+    with open(FILTERED_PACKETS2_OUTPUT_PATH, "w") as f:
         json.dump(refined, f, indent=2, default=str)
 
     return refined
 
 #---------------------------------------------------------------------------------------------------------------
-
+#--Verification functions
+ 
 def validate_filtered_packets(packet_json_path, time_windows):
     with open(packet_json_path, "r") as f:
         packets = json.load(f)
@@ -385,6 +455,9 @@ def count_all_packets_in_windows(pcap_path, time_windows):
         print(f"⏱ Último paquete en ventana: {last_match_time}")
 
     return count
+
+#--------------------------------------------------------------------------------------------------------------
+#--Main
 
 def process_data():
     exploits = parse_report(REPORT_PATH)
