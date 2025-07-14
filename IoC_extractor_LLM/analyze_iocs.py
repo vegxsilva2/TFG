@@ -13,10 +13,11 @@ from datetime import datetime, timezone
 # Paths
 BASE_DIR = Path(__file__).resolve().parent
 EXPLOITS_INPUT_PATH = BASE_DIR / "../output/exploits_output.json"
-#PACKETS_INPUT_PATH = BASE_DIR / "../output/refined_packets.json"
-PACKETS_INPUT_PATH = BASE_DIR / "../output/refined_packets2.json"
+PACKETS_INPUT_PATH = BASE_DIR / "../output/refined_packets.json"
 #IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit.json"
-IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit2.json"
+#IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit2.json"
+IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit3.json"
+
 
 # API Key. Algun dia lo pondré por variable de entorno pero hoy no va a ser
 OPENAI_API_KEY = "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"
@@ -59,11 +60,16 @@ def build_analysis_prompt(exploit, packet):
     """
     Construye un prompt detallado para el LLM siguiendo estructura basada en plantilla.
     """
+    protocol = packet.get("protocol", "UNKNOWN")
+    payload_text = packet.get("payload_text", "").strip()
     prompt_template = f"""
 ROLE: Cybersecurity analyst.
 TASK: Extract Indicators of Compromise (IoC) from the provided JSON packet traces.
 NOTES: 
  - The network packets are anonymized and come from a pentesting session.
+ - The most relevant protocol involved is: {protocol}
+ - If the payload contains hexadecimal data, analyze and interpret it according to the expected behavior of the {protocol} protocol. 
+ - Look for embedded commands, identifiers, file names, credentials, or any meaningful information inside the decoded payload.
  - Return only a valid JSON object. Do NOT include any explanation or wrap the result in code blocks (e.g. ```json).
  - Your output must only include IoCs and a concise technical summary of what happened, without disclaimers or generic recommendations.
  - Do not explain reliability or false positives.
@@ -158,6 +164,8 @@ def analyze_exploits_with_llm(exploits, packets):
 
             exploit_results.append({
                 "packet_window": packet.get("window"),
+                "protocol": packet.get("protocol", "UNKNOWN"),
+                "payload_text": packet.get("payload_text",""),
                 "iocs": parsed
             })
 

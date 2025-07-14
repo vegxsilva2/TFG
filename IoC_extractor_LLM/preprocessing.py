@@ -12,7 +12,7 @@ PCAP_PATH = BASE_DIR / "../input/capture@eth1.pcap"
 EXPLOITS_OUTPUT_PATH = BASE_DIR / "../output/exploits_output.json"
 PACKETS_OUTPUT_PATH = BASE_DIR / "../output/filtered_packets.json"
 FILTERED_PACKETS_OUTPUT_PATH = BASE_DIR / "../output/refined_packets.json"
-FILTERED_PACKETS2_OUTPUT_PATH = BASE_DIR / "../output/refined_packets2.json"
+
 
 def parse_report(path):
     
@@ -146,6 +146,38 @@ def find_matching_window(pkt_time, time_windows):
             return {"start": start.isoformat(), "end": end.isoformat()}
     return None
 
+def detect_protocol(paquete):
+    # Normaliza las capas a minúsculas
+    capas = [capa.lower() for capa in paquete.get("layers", [])]
+
+    # Lista priorizada de protocolos relevantes (capas superiores primero)
+    protocol_priority = [
+        "smb", "smb2", "http", "https", "ftp", "ssh", "telnet", "smtp", "imap", "pop",
+        "dns", "ntp", "snmp", "ldap", "dhcp", "rdp", "quic", "tls", "ssl",
+        "mqtt", "coap", "rtsp", "sip", "tftp", "netbios", "mdns", "radius",
+        #"tcp", "udp"  # Solo como fallback
+    ]
+
+    for proto in protocol_priority:
+        if proto in capas:
+            return proto.upper()  # Uniformizamos a mayúsculas en el output
+
+    return "UNKNOWN"  # Si no hay protocolo relevante
+
+def hex_payload_to_text(hex_payload):
+    # Quitar ':' y espacios
+    clean_hex = hex_payload.replace(":", "").replace(" ", "").strip()
+    try:
+        # Convertir hex a bytes
+        byte_data = bytes.fromhex(clean_hex)
+        # Intentar decodificar a utf-8 ignorando errores
+        text = byte_data.decode("utf-8", errors="ignore")
+        # Filtrar caracteres no imprimibles
+        printable_text = "".join(c if 32 <= ord(c) <= 126 else "." for c in text)
+        return printable_text
+    except Exception as e:
+        return ""
+
 def extract_packet_dict(pkt, pkt_time, matched_window):
     """
     Extrae toda la información relevante de un paquete, incluyendo timestamp y capas.
@@ -174,6 +206,22 @@ def extract_packet_dict(pkt, pkt_time, matched_window):
                 pkt_dict["layers"][layer_name][field_name] = value
             except AttributeError:
                 continue
+
+    pkt_dict["protocol"] = detect_protocol(pkt_dict)
+
+    # Extraer y decodificar el payload desde capa de aplicación o transporte
+    payload_hex = None
+
+    for candidate_layer in ["tcp", "udp", "data", "http", "smb", "ftp", "dns", "smtp"]:
+        layer_data = pkt_dict["layers"].get(candidate_layer, {})
+        payload_hex = layer_data.get("payload") or layer_data.get("data") or layer_data.get("data_data")
+        if payload_hex:
+            break  # usar el primer payload que encontremos
+
+    if payload_hex:
+        decoded = hex_payload_to_text(payload_hex)
+        if decoded.strip():  # solo si contiene algo útil
+            pkt_dict["payload_text"] = decoded
 
     return pkt_dict
 
@@ -395,7 +443,7 @@ def refine_packets(packets, top_n_ips=2,max_packets_per_window=5):
         representative = select_representative_packets(filtered, max_packets=max_packets_per_window)
         refined.extend(representative)
 
-    with open(FILTERED_PACKETS2_OUTPUT_PATH, "w") as f:
+    with open(FILTERED_PACKETS_OUTPUT_PATH, "w") as f:
         json.dump(refined, f, indent=2, default=str)
 
     return refined
