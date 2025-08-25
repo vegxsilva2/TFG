@@ -14,9 +14,7 @@ from datetime import datetime, timezone
 BASE_DIR = Path(__file__).resolve().parent
 EXPLOITS_INPUT_PATH = BASE_DIR / "../output/exploits_output.json"
 PACKETS_INPUT_PATH = BASE_DIR / "../output/refined_packets.json"
-#IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit.json"
-#IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit2.json"
-IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit3.json"
+IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit.json"
 
 
 # API Key. Algun dia lo pondré por variable de entorno pero hoy no va a ser

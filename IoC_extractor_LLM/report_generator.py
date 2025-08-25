@@ -1,79 +1,147 @@
 import json
 from pathlib import Path
 
-# Carga del JSON generado por el LLM
+# Rutas
 BASE_DIR = Path(__file__).resolve().parent
 INPUT_PATH = BASE_DIR / "../output/iocs_por_exploit3.json"
-OUTPUT_PATH = BASE_DIR / "../output/informe_iocs.html"
+OUTPUT_PATH = BASE_DIR / "../output/iocs_report.html"
 
+# Lectura del JSON
 def read_json():
-    with open(INPUT_PATH, "r") as f:
+    with open(INPUT_PATH, "r", encoding="utf-8") as f:
         return json.load(f)
 
+# Creación del HTML
 def create_html(exploits_data):
-    html = """
-    <!DOCTYPE html>
-    <html lang="es">
-    <head>
-        <meta charset="UTF-8">
-        <title>Informe de IoCs por Exploit</title>
-        <style>
-            body { font-family: Arial, sans-serif; margin: 20px; background: #f7f7f7; }
-            h1 { color: #333; }
-            h2 { background: #003366; color: white; padding: 10px; }
-            h3 { color: #003366; }
-            .exploit-block { background: white; padding: 20px; margin-bottom: 30px; border-radius: 8px; box-shadow: 0 0 5px #ccc; }
-            .packet { margin-bottom: 15px; padding: 10px; border-left: 3px solid #003366; background: #f0f0f0; border-radius: 4px; }
-            .field-label { font-weight: bold; color: #333; }
-            ul { padding-left: 20px; }
-        </style>
-    </head>
-    <body>
+    html = """<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Informe de IoCs por Exploit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; margin: 0; background: #f4f7fa; color: #222; }
+        header { background: #003366; color: white; padding: 32px 0; text-align: center; }
+        header h1 { margin: 0; font-size: 2.5em; }
+        .container { max-width: 1100px; margin: auto; padding: 32px 16px; }
+
+        .exploit-block {
+            background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,52,102,0.07);
+            margin-bottom: 40px; padding: 32px; border-left: 8px solid #00b4d8;
+        }
+        .exploit-header { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+        .exploit-icon { font-size: 2em; color: #00b4d8; }
+        .exploit-title { font-size: 1.35em; font-weight: 600; color: #003366; }
+        .badge { background: #e3f7fc; color: #00b4d8; padding: 4px 12px; border-radius: 12px; font-weight: 600; }
+
+        .summary {
+            background: #f7fafc; border-left: 4px solid #00b4d8;
+            padding: 16px 18px; margin: 18px 0; border-radius: 8px;
+        }
+
+        .exploit-details {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px 32px; margin-bottom: 18px;
+        }
+        .exploit-details p { margin: 0; }
+        .field-label { font-weight: 600; color: #003366; }
+
+        h3 { color: #00b4d8; margin-top: 28px; }
+
+        .packet-list { list-style: none; padding: 0; }
+        .packet {
+            background: #f4f7fa; border-radius: 10px;
+            padding: 18px 20px; margin-bottom: 18px;
+            border-left: 4px solid #00b4d8;
+        }
+        .packet:hover { border-left-color: #003366; }
+
+        .protocolo-badge {
+            display: inline-block; background: #00b4d8; color: white;
+            border-radius: 8px; padding: 2px 10px; font-size: 0.95em;
+            font-weight: 600;
+        }
+        em { color: #888; }
+
+        @media (max-width: 900px) {
+            .container { padding: 18px 8px; }
+            .exploit-block { padding: 20px; }
+            .exploit-details { grid-template-columns: 1fr; gap: 8px; }
+        }
+    </style>
+</head>
+<body>
+<header>
     <h1>Informe de Indicadores de Compromiso (IoCs)</h1>
-    """
+</header>
+<div class="container">
+"""
 
     for exploit in exploits_data:
         meta = exploit["exploit_metadata"]
-        resumen = exploit["resumen_exploit"].get("resumen", "")
+        resumen = exploit.get("resumen_exploit", {}).get("resumen", "")
+        cve = ""
+        if "references" in meta and isinstance(meta["references"], str):
+            for ref in eval(meta["references"]):
+                if ref[0] == "CVE":
+                    cve = f"CVE-{ref[1]}"
+                    break
+
         html += f"""
-        <div class="exploit-block">
-            <h2>Exploit: {meta.get("id", "Sin ID")} - {meta.get("cve", "")}</h2>
-            <p><span class="field-label">Resumen:</span> {resumen}</p>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">{meta.get("id", "Sin ID")} <span class="badge">{cve or "Sin CVE"}</span></div>
+        </div>
+        <div class="summary">{resumen}</div>
+        <div class="exploit-details">
             <p><span class="field-label">Exploit:</span> {meta.get("exploit", "")}</p>
             <p><span class="field-label">Payload:</span> {meta.get("payload", "")}</p>
             <p><span class="field-label">Shell Type:</span> {", ".join(meta.get("shell_type", []))}</p>
             <p><span class="field-label">Fuente:</span> {meta.get("source", "")}</p>
             <p><span class="field-label">Ventana temporal:</span> {meta.get("start_timestamp")} → {meta.get("end_timestamp")}</p>
-            <h3>Paquetes asociados:</h3>
-        """
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">"""
 
         for pkt in exploit["iocs"]:
             pkt_win = pkt.get("packet_window", {})
             iocs = pkt.get("iocs", {})
             payload_text = pkt.get("payload_text", "")
+            protocolo = pkt.get("protocol", "UNKNOWN")
+
             html += f"""
-            <div class="packet">
-                <p><span class="field-label">Ventana:</span> {pkt_win.get("start")} → {pkt_win.get("end")}</p>
-                <p><span class="field-label">Protocolo:</span> {pkt.get("protocol", "UNKNOWN")}</p>
-                <p><span class="field-label">Payload interpretado:</span> {payload_text or '<em>No disponible</em>'}</p>
-                <p><span class="field-label">IPs:</span> {", ".join(iocs.get("ips", []))}</p>
-                <p><span class="field-label">Puertos:</span> {", ".join(iocs.get("puertos", []))}</p>
-                <p><span class="field-label">Comandos:</span> {", ".join(iocs.get("comandos", [])) or '—'}</p>
-                <p><span class="field-label">URLs:</span> {", ".join(iocs.get("urls", [])) or '—'}</p>
-                <p><span class="field-label">Observaciones:</span> {iocs.get("observaciones", "")}</p>
-            </div>
-            """
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Ventana:</span> {pkt_win.get("start")} → {pkt_win.get("end")}</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">{protocolo}</span></p>
+                    <p><span class="field-label">Payload interpretado:</span> {payload_text or '<em>No disponible</em>'}</p>
+                    <p><span class="field-label">IPs:</span> {", ".join(iocs.get("ips", []))}</p>
+                    <p><span class="field-label">Puertos:</span> {", ".join(iocs.get("puertos", []))}</p>
+                    <p><span class="field-label">Comandos:</span> {", ".join(iocs.get("comandos", [])) or '—'}</p>
+                    <p><span class="field-label">URLs:</span> {", ".join(iocs.get("urls", [])) or '—'}</p>
+                    <p><span class="field-label">Observaciones:</span> {iocs.get("observaciones", "")}</p>
+                </div>
+            </li>"""
 
-        html += "</div>"
+        html += """
+        </ul>
+    </div>"""
 
-    html += "</body></html>"
+    html += """
+</div>
+</body>
+</html>"""
 
-    # Guardar el HTML en disco
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
         f.write(html)
-    
 
+# Generador
 def generate_report():
-    json_file = read_json()
-    create_html(json_file)
-    print(f"✅ Informe HTML generado en: {OUTPUT_PATH.resolve()}")
+    exploits_data = read_json()
+    if exploits_data:
+        create_html(exploits_data)
+        print(f"✅ Informe HTML generado en: {OUTPUT_PATH.resolve()}")
+    else:
+        print("⚠️ El archivo JSON está vacío o no se pudo cargar.")
+

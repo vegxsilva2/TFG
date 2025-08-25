@@ -5,155 +5,53 @@
     <title>Informe de IoCs por Exploit</title>
     <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
     <style>
-        body {
-            font-family: 'Montserrat', Arial, sans-serif;
-            margin: 0;
-            background: #f4f7fa;
-            color: #222;
-        }
-        header {
-            background: #003366;
-            color: #fff;
-            padding: 32px 0 24px 0;
-            text-align: center;
-            box-shadow: 0 4px 24px rgba(0,0,0,0.08);
-        }
-        header h1 {
-            font-size: 2.5em;
-            margin: 0;
-            letter-spacing: 2px;
-        }
-        .container {
-            max-width: 1100px;
-            margin: 0 auto;
-            padding: 32px 16px;
-        }
+        body { font-family: 'Montserrat', sans-serif; margin: 0; background: #f4f7fa; color: #222; }
+        header { background: #003366; color: white; padding: 32px 0; text-align: center; }
+        header h1 { margin: 0; font-size: 2.5em; }
+        .container { max-width: 1100px; margin: auto; padding: 32px 16px; }
+
         .exploit-block {
-            background: #fff;
-            border-radius: 16px;
-            box-shadow: 0 2px 16px rgba(0,52,102,0.07);
-            margin-bottom: 40px;
-            padding: 32px 28px 24px 28px;
-            border-left: 8px solid #00b4d8;
-            transition: box-shadow 0.2s;
-            position: relative;
+            background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,52,102,0.07);
+            margin-bottom: 40px; padding: 32px; border-left: 8px solid #00b4d8;
         }
-        .exploit-block:hover {
-            box-shadow: 0 8px 32px rgba(0,180,216,0.13), 0 1.5px 8px rgba(0,0,0,0.07);
-        }
-        .exploit-header {
-            display: flex;
-            align-items: center;
-            gap: 18px;
-            margin-bottom: 18px;
-        }
-        .exploit-icon {
-            background: #00b4d8;
-            color: #fff;
-            border-radius: 50%;
-            width: 48px;
-            height: 48px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 2em;
-            box-shadow: 0 2px 8px rgba(0,180,216,0.13);
-        }
-        .exploit-title {
-            font-size: 1.35em;
-            font-weight: 600;
-            color: #003366;
-            letter-spacing: 1px;
-        }
-        .badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 12px;
-            background: #e3f7fc;
-            color: #00b4d8;
-            font-size: 0.95em;
-            font-weight: 600;
-            margin-left: 8px;
-            letter-spacing: 0.5px;
-        }
+        .exploit-header { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+        .exploit-icon { font-size: 2em; color: #00b4d8; }
+        .exploit-title { font-size: 1.35em; font-weight: 600; color: #003366; }
+        .badge { background: #e3f7fc; color: #00b4d8; padding: 4px 12px; border-radius: 12px; font-weight: 600; }
+
         .summary {
-            background: #f7fafc;
-            border-radius: 8px;
-            padding: 16px 18px;
-            margin-bottom: 18px;
-            font-size: 1.05em;
-            color: #222;
-            border-left: 4px solid #00b4d8;
+            background: #f7fafc; border-left: 4px solid #00b4d8;
+            padding: 16px 18px; margin: 18px 0; border-radius: 8px;
         }
+
         .exploit-details {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 12px 32px;
-            margin-bottom: 18px;
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px 32px; margin-bottom: 18px;
         }
-        .exploit-details p {
-            margin: 0;
-            font-size: 1em;
-        }
-        .field-label {
-            font-weight: 600;
-            color: #003366;
-        }
-        h3 {
-            color: #00b4d8;
-            margin-top: 28px;
-            margin-bottom: 12px;
-            font-size: 1.1em;
-            letter-spacing: 1px;
-        }
-        .packet-list {
-            margin: 0;
-            padding: 0;
-            list-style: none;
-        }
+        .exploit-details p { margin: 0; }
+        .field-label { font-weight: 600; color: #003366; }
+
+        h3 { color: #00b4d8; margin-top: 28px; }
+
+        .packet-list { list-style: none; padding: 0; }
         .packet {
-            background: #f4f7fa;
-            border-radius: 10px;
-            box-shadow: 0 1px 6px rgba(0,180,216,0.07);
-            margin-bottom: 18px;
-            padding: 18px 20px 14px 20px;
+            background: #f4f7fa; border-radius: 10px;
+            padding: 18px 20px; margin-bottom: 18px;
             border-left: 4px solid #00b4d8;
-            position: relative;
-            transition: box-shadow 0.2s, border-left 0.2s;
         }
-        .packet:hover {
-            box-shadow: 0 4px 16px rgba(0,180,216,0.13);
-            border-left: 4px solid #003366;
-        }
-        .packet .packet-icon {
-            position: absolute;
-            left: 12px;
-            top: 12px;
-            font-size: 1.2em;
-            color: #00b4d8;
-            opacity: 0.7;
-        }
-        .packet-content {
-            margin-left: 32px;
-        }
+        .packet:hover { border-left-color: #003366; }
+
         .protocolo-badge {
-            display: inline-block;
-            background: #00b4d8;
-            color: #fff;
-            border-radius: 8px;
-            padding: 2px 10px;
-            font-size: 0.95em;
-            margin-left: 6px;
+            display: inline-block; background: #00b4d8; color: white;
+            border-radius: 8px; padding: 2px 10px; font-size: 0.95em;
             font-weight: 600;
-            letter-spacing: 0.5px;
         }
-        em {
-            color: #888;
-        }
+        em { color: #888; }
+
         @media (max-width: 900px) {
-            .container { padding: 18px 4px; }
-            .exploit-block { padding: 18px 8px; }
-            .exploit-details { grid-template-columns: 1fr; gap: 8px 0; }
+            .container { padding: 18px 8px; }
+            .exploit-block { padding: 20px; }
+            .exploit-details { grid-template-columns: 1fr; gap: 8px; }
         }
     </style>
 </head>
@@ -166,11 +64,10 @@
     <div class="exploit-block">
         <div class="exploit-header">
             <div class="exploit-icon">🛡️</div>
-            <span class="exploit-title">OSVDB-34700 <span class="badge">Samba CVE-2007-2447</span></span>
+            <div class="exploit-title">OSVDB-34700 <span class="badge">CVE-2007-2447</span></div>
         </div>
-        <div class="summary">
-            El exploit OSVDB-34700 se utilizó para intentar explotar la vulnerabilidad Samba 'username map script' (CVE-2007-2447). El ataque se originó desde la IP <b>172.19.0.3</b> hacia la IP <b>172.19.0.2</b>, utilizando principalmente los puertos <b>38293</b> y <b>139</b>. Se detectó un intento inicial de conexión (SYN) seguido de un intento de establecer una conexión SMB utilizando los dialectos <b>LANMAN1.0</b> y <b>NT LANMAN 1.0</b>. Posteriormente, se detectó un exploit <b>multi/samba/usermap_script</b> con payload <b>cmd/unix/bind_netcat</b>, indicando una comunicación entre las mismas IPs a través de los puertos <b>40103</b> y <b>2425</b>. Se encontró un comando <b>echo</b> en el payload. Finalmente, se observó una actividad sospechosa entre las mismas IPs.
-        </div>
+        <div class="summary">{
+   "resumen": "El exploit OSVDB-34700 se utilizó para intentar explotar la vulnerabilidad Samba 'username map script' (CVE-2007-2447). El ataque se originó desde la IP 172.19.0.3 hacia la IP 172.19.0.2, utilizando principalmente los puertos 38293 y 139. Se detectó un intento inicial de conexión (SYN) seguido de un intento de establecer una conexión SMB utilizando los dialectos LANMAN1.0 y NT LANMAN 1.0. Posteriormente, se detectó un exploit multi/samba/usermap_script con payload cmd/unix/bind_netcat, indicando una comunicación entre las mismas IPs a través de los puertos 40103 y 2425. Se encontró un comando echo en el payload. Finalmente, se observó una actividad sospechosa entre las mism</div>
         <div class="exploit-details">
             <p><span class="field-label">Exploit:</span> multi/samba/usermap_script</p>
             <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
@@ -181,8 +78,7 @@
         <h3>Paquetes asociados</h3>
         <ul class="packet-list">
             <li class="packet">
-                <span class="packet-icon">📦</span>
-                <div class="packet-content">
+                <div>
                     <p><span class="field-label">Ventana:</span> 2024-10-17T10:07:27.278946+00:00 → 2024-10-17T10:07:43.435071+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
                     <p><span class="field-label">Payload interpretado:</span> <em>No disponible</em></p>
@@ -194,8 +90,7 @@
                 </div>
             </li>
             <li class="packet">
-                <span class="packet-icon">📦</span>
-                <div class="packet-content">
+                <div>
                     <p><span class="field-label">Ventana:</span> 2024-10-17T10:07:27.278946+00:00 → 2024-10-17T10:07:43.435071+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">SMB</span></p>
                     <p><span class="field-label">Payload interpretado:</span> ...TSMBr.....................2...1..LANMAN1.0..LM1.2X002..NT LANMAN 1.0..NT LM 0.12.</p>
@@ -207,8 +102,7 @@
                 </div>
             </li>
             <li class="packet">
-                <span class="packet-icon">📦</span>
-                <div class="packet-content">
+                <div>
                     <p><span class="field-label">Ventana:</span> 2024-10-17T10:07:27.278946+00:00 → 2024-10-17T10:07:43.435071+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
                     <p><span class="field-label">Payload interpretado:</span> echo UzKqd4cKwIaqwUCagTbV.</p>
@@ -220,8 +114,7 @@
                 </div>
             </li>
             <li class="packet">
-                <span class="packet-icon">📦</span>
-                <div class="packet-content">
+                <div>
                     <p><span class="field-label">Ventana:</span> 2024-10-17T10:07:27.278946+00:00 → 2024-10-17T10:07:43.435071+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
                     <p><span class="field-label">Payload interpretado:</span> <em>No disponible</em></p>
@@ -233,8 +126,7 @@
                 </div>
             </li>
             <li class="packet">
-                <span class="packet-icon">📦</span>
-                <div class="packet-content">
+                <div>
                     <p><span class="field-label">Ventana:</span> 2024-10-17T10:07:27.278946+00:00 → 2024-10-17T10:07:43.435071+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
                     <p><span class="field-label">Payload interpretado:</span> <em>No disponible</em></p>

@@ -1,4 +1,4 @@
-from preprocessing import process_data
+from preprocessing import preprocess_data
 from analyze_iocs import process_ioc_analysis
 from report_generator import generate_report
 
