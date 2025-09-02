@@ -1,10 +1,12 @@
 import json
 from pathlib import Path
+import html
 
 # Rutas
 BASE_DIR = Path(__file__).resolve().parent
-INPUT_PATH = BASE_DIR / "../output/iocs_por_exploit3.json"
-OUTPUT_PATH = BASE_DIR / "../output/iocs_report.html"
+INPUT_PATH = BASE_DIR / "../output/iocs_por_exploit2.json"
+#OUTPUT_PATH = BASE_DIR / "../output/iocs_report.html"
+OUTPUT_PATH = BASE_DIR / "../output/iocs_report2.html"
 
 # Lectura del JSON
 def read_json():
@@ -13,7 +15,7 @@ def read_json():
 
 # Creación del HTML
 def create_html(exploits_data):
-    html = """<!DOCTYPE html>
+    html_content = """<!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
@@ -79,7 +81,7 @@ def create_html(exploits_data):
 
     for exploit in exploits_data:
         meta = exploit["exploit_metadata"]
-        resumen = exploit.get("resumen_exploit", {}).get("resumen", "")
+        resumen_html = exploit.get("resumen_exploit", {})
         cve = ""
         if "references" in meta and isinstance(meta["references"], str):
             for ref in eval(meta["references"]):
@@ -87,13 +89,13 @@ def create_html(exploits_data):
                     cve = f"CVE-{ref[1]}"
                     break
 
-        html += f"""
+        html_content += f"""
     <div class="exploit-block">
         <div class="exploit-header">
             <div class="exploit-icon">🛡️</div>
             <div class="exploit-title">{meta.get("id", "Sin ID")} <span class="badge">{cve or "Sin CVE"}</span></div>
         </div>
-        <div class="summary">{resumen}</div>
+        <div class="summary">{resumen_html}</div>
         <div class="exploit-details">
             <p><span class="field-label">Exploit:</span> {meta.get("exploit", "")}</p>
             <p><span class="field-label">Payload:</span> {meta.get("payload", "")}</p>
@@ -110,7 +112,7 @@ def create_html(exploits_data):
             payload_text = pkt.get("payload_text", "")
             protocolo = pkt.get("protocol", "UNKNOWN")
 
-            html += f"""
+            html_content += f"""
             <li class="packet">
                 <div>
                     <p><span class="field-label">Ventana:</span> {pkt_win.get("start")} → {pkt_win.get("end")}</p>
@@ -124,24 +126,24 @@ def create_html(exploits_data):
                 </div>
             </li>"""
 
-        html += """
+        html_content += """
         </ul>
     </div>"""
 
-    html += """
+    html_content += """
 </div>
 </body>
 </html>"""
 
     with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
-        f.write(html)
+        f.write(html_content)
 
 # Generador
 def generate_report():
     exploits_data = read_json()
     if exploits_data:
         create_html(exploits_data)
-        print(f"✅ Informe HTML generado en: {OUTPUT_PATH.resolve()}")
+        print(f"Informe HTML generado en: {OUTPUT_PATH.resolve()}")
     else:
-        print("⚠️ El archivo JSON está vacío o no se pudo cargar.")
+        print("El archivo JSON está vacío o no se pudo cargar.")
 

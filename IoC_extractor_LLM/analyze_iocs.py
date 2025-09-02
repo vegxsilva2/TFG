@@ -3,6 +3,7 @@ from openai import OpenAI
 import json
 import os
 from datetime import datetime, timezone
+from huggingface_hub import InferenceClient
 
 #Refinado el promt para obtener el output deseado -> DONE
 #Decidir si es necesario enviar todos los paquetes por exploit al LLM (aporta esto información extra?) -> DONE
@@ -14,21 +15,41 @@ from datetime import datetime, timezone
 BASE_DIR = Path(__file__).resolve().parent
 EXPLOITS_INPUT_PATH = BASE_DIR / "../output/exploits_output.json"
 PACKETS_INPUT_PATH = BASE_DIR / "../output/refined_packets.json"
-IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit.json"
+IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit2.json"
 
 
 # API Key. Algun dia lo pondré por variable de entorno pero hoy no va a ser
 OPENAI_API_KEY = "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"
 client = OpenAI(api_key=OPENAI_API_KEY)
 
+
+# Inicializar cliente Hugging Face Inference API
+hf_client = InferenceClient(token="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")
+
 def load_json(path):
+    """
+    Carga un archivo JSON desde una ruta especificada y devuelve su contenido.
+
+    La función abre el archivo en modo lectura, lo interpreta como JSON y 
+    devuelve el objeto Python correspondiente (lista o diccionario). 
+
+    :param path: Ruta del archivo JSON a cargar.
+    :return: Objeto Python resultante del parseo del JSON.
+    """
     with open(path, "r") as f:
         return json.load(f)
 
 def match_packets_to_exploit(exploit, packets):
     """
-    Devuelve los paquetes cuya ventana de tiempo coincide exactamente con la del exploit.
-    Se asegura que ambas fechas estén normalizadas como datetime con UTC.
+    Asocia paquetes de red con un exploit en función de sus ventanas temporales.
+
+    La función compara las marcas de tiempo de inicio y fin de un exploit 
+    con las ventanas de los paquetes. Devuelve únicamente aquellos paquetes 
+    cuya ventana coincide exactamente con la del exploit. 
+
+    :param exploit: Diccionario con metadatos del exploit (incluyendo timestamps).
+    :param packets: Lista de diccionarios con información de paquetes refinados.
+    :return: Lista de paquetes coincidentes con el exploit.
     """
     try:
         start = datetime.fromisoformat(exploit["start_timestamp"]).replace(tzinfo=timezone.utc)
@@ -56,7 +77,16 @@ def match_packets_to_exploit(exploit, packets):
 
 def build_analysis_prompt(exploit, packet):
     """
-    Construye un prompt detallado para el LLM siguiendo estructura basada en plantilla.
+    Construye el prompt para el LLM con la información de un exploit y un paquete.
+
+    El prompt incluye detalles técnicos del exploit, el contenido del paquete
+    (protocolo, payload, capas) y una plantilla JSON para la extracción de IoCs. 
+    Está diseñado para guiar al modelo en la identificación de indicadores de 
+    compromiso a nivel de red.
+
+    :param exploit: Diccionario con los detalles de un exploit específico.
+    :param packet: Diccionario con los datos de un paquete asociado.
+    :return: Cadena de texto con el prompt completo para el LLM.
     """
     protocol = packet.get("protocol", "UNKNOWN")
     payload_text = packet.get("payload_text", "").strip()
@@ -101,20 +131,26 @@ OUTPUT FORMAT (in JSON):
 
 def build_summary_prompt(exploit, iocs_por_paquete):
     """
-    Construye un prompt para que el LLM genere un resumen técnico global del exploit
-    basándose en los IoCs obtenidos por cada paquete.
+    Construye el prompt para el LLM encargado de generar un resumen global del exploit.
+
+    Toma como entrada los IoCs extraídos previamente de los paquetes asociados 
+    a un exploit y genera un contexto que permita al modelo redactar una síntesis 
+    técnica sobre el patrón de ataque.
+
+    :param exploit: Diccionario con metadatos del exploit.
+    :param iocs_por_paquete: Lista de IoCs (uno por paquete) en formato JSON.
+    :return: Cadena de texto con el prompt de resumen para el LLM.
     """
     prompt_template = f"""
 ROLE: Cybersecurity analyst.
-TASK: Based on the following Indicators of Compromise (IoCs) extracted from different network packets related to a single exploit, generate a technical summary of the exploit activity.
+TASK: Based on the Indicators of Compromise (IoCs) extracted from the network packets of this exploit,
+write a technical narrative summary of the exploit's activity in Spanish.
+
 NOTES:
- - Do NOT include general explanations or recommendations.
- - Focus only on what the data reveals.
- - Summarize the attack pattern: relevant IPs, ports, payloads, tools, goals, etc.
- - Output ONLY a concise JSON object like:
- {{
-   "resumen": "Breve resumen técnico del comportamiento del exploit en base a los datos previos."
- }}
+- Output MUST be a plaintext
+- Write a continuous paragraph, detailed, please DO NOT write more than 100 words.
+- Include IPs, ports, payloads, commands, tools, attack sequence, suspicious activity.
+- Do NOT add recommendations, disclaimers, or any other JSON fields.
 
 EXPLOIT:
 - ID: {exploit.get("id", "N/A")}
@@ -125,12 +161,27 @@ EXPLOIT:
 
 IoCs extraídos por paquete:
 {json.dumps(iocs_por_paquete, indent=2)}
+
+OUTPUT FORMAT:
+{
+    "Un párrafo de texto técnico en español que describa completamente la actividad del exploit."
+}
 """
     return prompt_template
 
 def analyze_exploits_with_llm(exploits, packets):
     """
-    Ejecuta el análisis de IoCs por paquete y un resumen técnico por exploit.
+    Ejecuta el análisis de IoCs y resumen técnico de los exploits usando el LLM.
+
+    Para cada exploit:
+      - Selecciona los paquetes correspondientes.
+      - Construye un prompt por paquete y solicita al LLM los IoCs.
+      - Genera un resumen técnico global del exploit a partir de todos los IoCs.
+    Devuelve una lista con los resultados estructurados.
+
+    :param exploits: Lista de exploits procesados desde el reporte JSON.
+    :param packets: Lista de paquetes refinados obtenidos de las capturas PCAP.
+    :return: Lista de diccionarios con IoCs por exploit y su resumen técnico.
     """
     results = []
 
@@ -169,8 +220,11 @@ def analyze_exploits_with_llm(exploits, packets):
 
             solo_iocs.append(parsed)  # Para usar luego en el resumen
 
-        # 🔍 Llamada al LLM para generar resumen del exploit
+        #Llamada al LLM para generar resumen del exploit
         summary_prompt = build_summary_prompt(exploit, solo_iocs)
+        print("---SUMMARY PROMPT---")
+        print(summary_prompt)
+        print("---END SUMMARY PROMPT---")
         summary_response = client.chat.completions.create(
             model="gpt-4",
             messages=[
@@ -178,13 +232,20 @@ def analyze_exploits_with_llm(exploits, packets):
                 {"role": "user", "content": summary_prompt}
             ],
             temperature=0.2,
-            max_tokens=200
+            max_tokens=300
         )
 
+        print("\n--- SALIDA RAW DEL LLM (RESUMEN) ---")
+        print(summary_response.choices[0].message.content)
+        print("--- FIN DE SALIDA RAW ---\n")
+
         try:
-            resumen_exploit = json.loads(summary_response.choices[0].message.content)
+            parsed = json.loads(summary_response.choices[0].message.content)
+            resumen_exploit = parsed.get("resumen", "").strip()
+
         except json.JSONDecodeError:
-            resumen_exploit = {"resumen": summary_response.choices[0].message.content}
+            # fallback si no es JSON
+            resumen_exploit = summary_response.choices[0].message.content.strip()
 
         results.append({
             "exploit_id": exploit.get("id") or exploit.get("cve"),
@@ -199,21 +260,126 @@ def analyze_exploits_with_llm(exploits, packets):
     return results
 
 def save_json(data, path):
+    """
+    Guarda un objeto Python en un archivo JSON en la ruta especificada.
+
+    La función convierte el objeto a formato JSON con indentación para mayor 
+    legibilidad y lo escribe en disco.
+
+    :param data: Objeto Python a guardar (lista o diccionario).
+    :param path: Ruta de salida para el archivo JSON.
+    """
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
 
+
+def analyze_exploits_with_hf_api(exploits, packets, model_name="tiiuae/falcon-7b-instruct"):
+    """
+    Igual que analyze_exploits_with_llm, pero usando la API de Hugging Face para un modelo abierto.
+    
+    :param exploits: Lista de exploits procesados desde el reporte JSON.
+    :param packets: Lista de paquetes refinados obtenidos de las capturas PCAP.
+    :param model_name: Nombre del modelo de HF a usar en la Inference API.
+    :return: Lista de diccionarios con IoCs por exploit y su resumen técnico.
+    """
+    results = []
+
+    for exploit in exploits:
+        matched_packets = match_packets_to_exploit(exploit, packets)
+        if not matched_packets:
+            continue
+
+        exploit_results = []
+        solo_iocs = []
+
+        for packet in matched_packets:
+            prompt = build_analysis_prompt(exploit, packet)
+
+            # Llamada al modelo vía API de HF
+            response = hf_client.text_generation(
+                model=model_name,
+                prompt=prompt,
+                max_new_tokens=400,
+                do_sample=False
+            )
+
+            generated_text = response[0]['generated_text']
+
+            try:
+                parsed = json.loads(generated_text)
+            except json.JSONDecodeError:
+                parsed = {"raw": generated_text}
+
+            exploit_results.append({
+                "packet_window": packet.get("window"),
+                "protocol": packet.get("protocol", "UNKNOWN"),
+                "payload_text": packet.get("payload_text",""),
+                "iocs": parsed
+            })
+
+            solo_iocs.append(parsed)
+
+        # Generar resumen del exploit
+        summary_prompt = build_summary_prompt(exploit, solo_iocs)
+        print("---SUMMARY PROMPT---")
+        print(summary_prompt)
+        print("---END SUMMARY PROMPT---")
+
+        summary_response = hf_client.text_generation(
+            model=model_name,
+            prompt=summary_prompt,
+            max_new_tokens=300,
+            do_sample=False
+        )
+
+        summary_text = summary_response[0]['generated_text']
+
+        try:
+            parsed = json.loads(summary_text)
+            resumen_exploit = parsed.get("resumen", "").strip()
+        except json.JSONDecodeError:
+            resumen_exploit = summary_text.strip()
+
+        results.append({
+            "exploit_id": exploit.get("id") or exploit.get("cve"),
+            "exploit_metadata": exploit,
+            "iocs": exploit_results,
+            "resumen_exploit": resumen_exploit
+        })
+
+        # Debug: solo procesamos un exploit por ahora
+        break
+
+    return results
+
 def process_ioc_analysis():
-    print("\n🔄 Cargando exploits y paquetes refinados...")
+    """
+    Orquesta el flujo completo de análisis de IoCs para los exploits.
+
+    Pasos principales:
+      1. Cargar exploits y paquetes refinados desde archivos JSON.
+      2. Ejecutar el análisis de IoCs con el LLM.
+      3. Guardar los resultados (IoCs y resúmenes por exploit) en disco.
+    
+    :return: None
+    """
+
+    print("\nCargando exploits y paquetes refinados...")
     exploits = load_json(EXPLOITS_INPUT_PATH)
     packets = load_json(PACKETS_INPUT_PATH)
 
-    print("🧠 Ejecutando análisis de IoCs por exploit...")
-    results = analyze_exploits_with_llm(exploits, packets)
+    #print("Ejecutando análisis de IoCs por exploit...")
+    #results = analyze_exploits_with_llm(exploits, packets)
 
-    print(f"💾 Guardando resultados en {IOCS_OUTPUT_PATH}...")
-    save_json(results, IOCS_OUTPUT_PATH)
+    #print(f"Guardando resultados en {IOCS_OUTPUT_PATH}...")
+    #save_json(results, IOCS_OUTPUT_PATH)
 
-    print("\n✅ Análisis completado exitosamente.")
+    print("Ejecutando análisis opensource")
+
+    results = analyze_exploits_with_hf_api(exploits,packets)
+    save_json(results,BASE_DIR / "../output/opensource.json")
+
+    print("\nAnálisis completado exitosamente.")
 
 if __name__ == "__main__":
     process_ioc_analysis()

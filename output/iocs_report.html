@@ -66,8 +66,7 @@
             <div class="exploit-icon">🛡️</div>
             <div class="exploit-title">OSVDB-34700 <span class="badge">CVE-2007-2447</span></div>
         </div>
-        <div class="summary">{
-   "resumen": "El exploit OSVDB-34700 se utilizó para intentar explotar la vulnerabilidad Samba 'username map script' (CVE-2007-2447). El ataque se originó desde la IP 172.19.0.3 hacia la IP 172.19.0.2, utilizando principalmente los puertos 38293 y 139. Se detectó un intento inicial de conexión (SYN) seguido de un intento de establecer una conexión SMB utilizando los dialectos LANMAN1.0 y NT LANMAN 1.0. Posteriormente, se detectó un exploit multi/samba/usermap_script con payload cmd/unix/bind_netcat, indicando una comunicación entre las mismas IPs a través de los puertos 40103 y 2425. Se encontró un comando echo en el payload. Finalmente, se observó una actividad sospechosa entre las mism</div>
+        <div class="summary">Durante la ventana de tiempo del 17 de octubre de 2024, se detectó un intento de explotación de la vulnerabilidad Samba 'username map script' (CVE-2007-2447) desde la IP 172.19.0.3 hacia la IP 172.19.0.2. El atacante intentó establecer una conexión TCP desde el puerto 38293 al puerto 139, conocido por ser utilizado por el protocolo SMB. Este comportamiento es consistente con el exploit multi/samba/usermap_script que utiliza el payload cmd/unix/bind_netcat. Además, se observó un comando 'echo' con un string codificado en el payload. No se encontraron comandos específicos en los paquetes capturados.</div>
         <div class="exploit-details">
             <p><span class="field-label">Exploit:</span> multi/samba/usermap_script</p>
             <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
@@ -86,7 +85,7 @@
                     <p><span class="field-label">Puertos:</span> 38293, 139</p>
                     <p><span class="field-label">Comandos:</span> —</p>
                     <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de establecimiento de conexión (SYN) desde la IP 172.19.0.3 al puerto 139 de la IP 172.19.0.2. No se observaron datos en la carga útil, lo que sugiere que puede ser una exploración inicial o un intento de explotación de la vulnerabilidad CVE-2007-2447.</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de establecimiento de conexión (SYN) desde la IP 172.19.0.3 puerto 38293 hacia la IP 172.19.0.2 puerto 139. Este comportamiento es consistente con el exploit multi/samba/usermap_script que utiliza el payload cmd/unix/bind_netcat.</p>
                 </div>
             </li>
             <li class="packet">
@@ -98,7 +97,7 @@
                     <p><span class="field-label">Puertos:</span> 38293, 139</p>
                     <p><span class="field-label">Comandos:</span> —</p>
                     <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad Samba 'username map script' (CVE-2007-2447) desde la IP 172.19.0.3 hacia la IP 172.19.0.2. El atacante intentó establecer una conexión SMB utilizando los dialectos LANMAN1.0 y NT LANMAN 1.0, lo que indica una posible explotación de la vulnerabilidad mencionada.</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad Samba 'username map script' (CVE-2007-2447) desde la IP 172.19.0.3 hacia la IP 172.19.0.2. El atacante intentó establecer una conexión SMB utilizando el dialecto LANMAN1.0. No se detectaron comandos específicos en la carga útil.</p>
                 </div>
             </li>
             <li class="packet">
@@ -110,7 +109,7 @@
                     <p><span class="field-label">Puertos:</span> 40103, 2425</p>
                     <p><span class="field-label">Comandos:</span> echo UzKqd4cKwIaqwUCagTbV</p>
                     <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Se detectó un exploit multi/samba/usermap_script con payload cmd/unix/bind_netcat. Los paquetes de red indican una comunicación entre las IPs 172.19.0.3 y 172.19.0.2 a través de los puertos 40103 y 2425 respectivamente. Se encontró un comando echo en el payload.</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un exploit (multi/samba/usermap_script) con un payload (cmd/unix/bind_netcat) en la sesión de pentesting. Los paquetes de red indican una comunicación entre las IPs 172.19.0.3 y 172.19.0.2 a través de los puertos 40103 y 2425 respectivamente. El payload contiene un comando 'echo' con un string codificado.</p>
                 </div>
             </li>
             <li class="packet">
@@ -122,7 +121,7 @@
                     <p><span class="field-label">Puertos:</span> 139, 38293</p>
                     <p><span class="field-label">Comandos:</span> —</p>
                     <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
-                    <p><span class="field-label">Observaciones:</span> Se detectó un posible exploit multi/samba/usermap_script con payload cmd/unix/bind_netcat. Los paquetes de red indican una conexión establecida entre las IPs 172.19.0.2 y 172.19.0.3 a través de los puertos 139 y 38293. El payload hexadecimal podría contener comandos o datos relevantes, pero no se pudo interpretar debido a la falta de información sobre el protocolo involucrado.</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un posible exploit (multi/samba/usermap_script) en la sesión de pentesting. El exploit parece haber sido lanzado desde la IP 172.19.0.2 hacia la IP 172.19.0.3, utilizando los puertos 139 y 38293. No se encontraron payloads o comandos específicos en los paquetes de red analizados.</p>
                 </div>
             </li>
             <li class="packet">
@@ -133,8 +132,8 @@
                     <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
                     <p><span class="field-label">Puertos:</span> 38293, 139</p>
                     <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Se detectó una actividad sospechosa entre las IPs 172.19.0.3 y 172.19.0.2 utilizando los puertos 38293 y 139 respectivamente. La actividad ocurrió durante la ventana de tiempo especificada y se identificó el uso del exploit multi/samba/usermap_script con el payload cmd/unix/bind_netcat. No se encontraron comandos, URLs o payloads específicos en los paquetes de red proporcionados.</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad Samba 'username map script' (CVE-2007-2447) desde la IP 172.19.0.3 hacia la IP 172.19.0.2. El atacante intentó establecer una conexión TCP desde el puerto 38293 al puerto 139, que es conocido por ser utilizado por el protocolo SMB. No se encontró ningún payload en los paquetes capturados.</p>
                 </div>
             </li>
         </ul>
