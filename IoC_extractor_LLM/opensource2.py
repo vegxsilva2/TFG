@@ -5,7 +5,7 @@ hf_token = "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"
 client = InferenceClient(token=hf_token)
 
 # Modelo ligero y abierto que soporta text-generation vía API
-model_name = "tiiuae/falcon-7b-instruct"  # se ejecuta en la nube, no en tu máquina
+model_name = "deepseek-ai/DeepSeek-V3.1-Base"  # se ejecuta en la nube, no en tu máquina
 
 # Prompt sencillo de prueba
 prompt = "Escribe un resumen técnico sobre un exploit de tipo SQL Injection."

@@ -1,0 +1,144 @@
+[
+  {
+    "exploit_id": "OSVDB-34700",
+    "exploit_metadata": {
+      "id": "OSVDB-34700",
+      "exploit": "multi/samba/usermap_script",
+      "payload": "cmd/unix/bind_netcat",
+      "references": "[['CVE', '2007-2447'], ['OSVDB', '34700'], ['BID', '23972'], ['URL', 'http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534'], ['URL', 'http://samba.org/samba/security/CVE-2007-2447.html']]",
+      "shell_type": [
+        "w",
+        "r"
+      ],
+      "source": "vulnerability",
+      "start_timestamp": "2024-10-17 10:07:27.278946+00:00",
+      "end_timestamp": "2024-10-17 10:07:43.435071+00:00"
+    },
+    "iocs": [
+      {
+        "packet_window": {
+          "start": "2024-10-17T10:07:27.278946+00:00",
+          "end": "2024-10-17T10:07:43.435071+00:00"
+        },
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "38293",
+            "139"
+          ],
+          "payloads": [
+            "02:04:05:b4:04:02:08:0a:17:ee:78:60:00:00:00:00:01:03:03:07"
+          ],
+          "comandos": [],
+          "urls": [],
+          "observaciones": "Se detect\u00f3 un intento de establecimiento de conexi\u00f3n a trav\u00e9s del protocolo TCP desde la IP 172.19.0.3 al puerto 139 de la IP 172.19.0.2. El paquete enviado incluye una serie de opciones TCP, incluyendo un tama\u00f1o m\u00e1ximo de segmento (MSS) de 1460, una ventana de escala de 128 y un timestamp. No se detectaron comandos o URLs espec\u00edficas en el payload."
+        }
+      },
+      {
+        "packet_window": {
+          "start": "2024-10-17T10:07:27.278946+00:00",
+          "end": "2024-10-17T10:07:43.435071+00:00"
+        },
+        "protocol": "SMB",
+        "payload_text": "...TSMBr.....................2...1..LANMAN1.0..LM1.2X002..NT LANMAN 1.0..NT LM 0.12.",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "38293",
+            "139"
+          ],
+          "payloads": [
+            "00:00:00:54:ff:53:4d:42:72:00:00:00:00:18:01:c0:00:00:00:00:00:00:00:00:00:00:00:00:00:2e:32:00:00:88:ca:00:31:00:02:4c:41:4e:4d:41:4e:31:2e:30:00:02:4c:4d:31:2e:32:58:30:30:32:00:02:4e:54:20:4c:41:4e:4d:41:4e:20:31:2e:30:00:02:4e:54:20:4c:4d:20:30:2e:31:32:00"
+          ],
+          "comandos": [],
+          "urls": [],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2007-2447 (Samba 'username map script' Command Execution) a trav\u00e9s del protocolo SMB. El atacante (172.19.0.3) intent\u00f3 establecer una conexi\u00f3n con el objetivo (172.19.0.2) en el puerto 139. El payload hexadecimal indica una negociaci\u00f3n SMB con dialectos LANMAN1.0, LM1.2X002, NT LANMAN 1.0 y NT LM 0.12."
+        }
+      },
+      {
+        "packet_window": {
+          "start": "2024-10-17T10:07:27.278946+00:00",
+          "end": "2024-10-17T10:07:43.435071+00:00"
+        },
+        "protocol": "UNKNOWN",
+        "payload_text": "echo UzKqd4cKwIaqwUCagTbV.",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "40103",
+            "2425"
+          ],
+          "payloads": [
+            "65:63:68:6f:20:55:7a:4b:71:64:34:63:4b:77:49:61:71:77:55:43:61:67:54:62:56:0a"
+          ],
+          "comandos": [
+            "echo UzKqd4cKwIaqwUCagTbV"
+          ],
+          "urls": [],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad OSVDB-34700 (CVE-2007-2447) en Samba. El atacante (172.19.0.3) intent\u00f3 ejecutar un comando remoto (echo UzKqd4cKwIaqwUCagTbV) en la m\u00e1quina objetivo (172.19.0.2) a trav\u00e9s del puerto 2425."
+        }
+      },
+      {
+        "packet_window": {
+          "start": "2024-10-17T10:07:27.278946+00:00",
+          "end": "2024-10-17T10:07:43.435071+00:00"
+        },
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "139",
+            "38293"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534",
+            "http://samba.org/samba/security/CVE-2007-2447.html"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad Samba 'username map script' (CVE-2007-2447) desde la IP 172.19.0.2 hacia la IP 172.19.0.3. El atacante intent\u00f3 establecer una conexi\u00f3n en el puerto 139. No se detectaron payloads espec\u00edficos en los paquetes de red proporcionados."
+        }
+      },
+      {
+        "packet_window": {
+          "start": "2024-10-17T10:07:27.278946+00:00",
+          "end": "2024-10-17T10:07:43.435071+00:00"
+        },
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "38293",
+            "139"
+          ],
+          "payloads": [
+            "01:01:08:0a:17:ee:78:60:30:f7:c3:8d"
+          ],
+          "comandos": [],
+          "urls": [],
+          "observaciones": "Se detect\u00f3 un tr\u00e1fico de red sospechoso durante la ventana de tiempo especificada. El origen del tr\u00e1fico es 172.19.0.3 y el destino es 172.19.0.2. El tr\u00e1fico se origin\u00f3 en el puerto 38293 y se dirigi\u00f3 al puerto 139. El protocolo involucrado no se pudo determinar. La carga \u00fatil del paquete incluye una secuencia de datos hexadecimal que necesita ser analizada para determinar su prop\u00f3sito. No se detectaron comandos o URL espec\u00edficas en la carga \u00fatil."
+        }
+      }
+    ],
+    "resumen_exploit": "El exploit OSVDB-34700 inici\u00f3 con un intento de conexi\u00f3n TCP desde la IP 172.19.0.3 al puerto 139 de la IP 172.19.0.2. Posteriormente, se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2007-2447 a trav\u00e9s del protocolo SMB, donde el atacante intent\u00f3 establecer una conexi\u00f3n con el objetivo en el puerto 139. El payload hexadecimal indicaba una negociaci\u00f3n SMB con varios dialectos. Luego, el atacante intent\u00f3 ejecutar un comando remoto en la m\u00e1quina objetivo a trav\u00e9s del puerto 2425. Se observ\u00f3 un intento de explotaci\u00f3n de la misma vulnerabilidad desde la IP 172.19.0.2 hacia la IP 172.19.0.3. Finalmente, se detect\u00f3 tr\u00e1fico de red sospechoso entre las mismas IPs, origin\u00e1ndose en el puerto 38293 y dirigi\u00e9ndose al puerto 139."
+  }
+]

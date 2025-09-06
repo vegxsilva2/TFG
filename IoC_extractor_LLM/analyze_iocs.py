@@ -71,7 +71,7 @@ def match_packets_to_exploit(exploit, packets):
     print("=====================================")
     print("Para el exploit: " + exploit.get("id", "N/A") + " con CVE: " + exploit.get("cve","") + " y timestamp " + exploit.get("start_timestamp","") + " - " + exploit.get("end_timestamp","") + " se encontraron los paquetes:")
     print("=====================================")
-    print(matched)
+    #print(matched)
 
     return matched
 
@@ -169,7 +169,33 @@ OUTPUT FORMAT:
 """
     return prompt_template
 
-def analyze_exploits_with_llm(exploits, packets):
+def extract_content(choice, model_type=None):
+    """
+    Extrae el texto de una respuesta del modelo, compatible con GPT-4 y GPT-5.
+    """
+    if hasattr(choice, "message") and hasattr(choice.message, "content"):
+        content = choice.message.content
+        # GPT-4
+        if isinstance(content, str):
+            return content
+        # GPT-5: lista de bloques
+        elif isinstance(content, list):
+            texts = [block.get("text", "") for block in content if block.get("type") == "text"]
+            return "\n".join(texts)
+    elif hasattr(choice, "output") and isinstance(choice.output, list):
+        # GPT-5 responses.create
+        texts = []
+        for item in choice.output:
+            if hasattr(item, "content"):
+                for c in item.content:
+                    if getattr(c, "type", "") == "output_text":
+                        texts.append(getattr(c, "text", ""))
+        return "\n".join(texts)
+    return ""
+
+
+
+def analyze_exploits_with_llm(exploits, packets, model):
     """
     Ejecuta el análisis de IoCs y resumen técnico de los exploits usando el LLM.
 
@@ -184,68 +210,87 @@ def analyze_exploits_with_llm(exploits, packets):
     :return: Lista de diccionarios con IoCs por exploit y su resumen técnico.
     """
     results = []
+    max_exploit = 5
+    num_exploit = 0
 
     for exploit in exploits:
         matched_packets = match_packets_to_exploit(exploit, packets)
         if not matched_packets:
             continue
-        
+
         exploit_results = []
         solo_iocs = []
 
         for packet in matched_packets:
             prompt = build_analysis_prompt(exploit, packet)
 
-            response = client.chat.completions.create(
-                model="gpt-4",
-                messages=[
-                    {"role": "system", "content": "Eres un experto analista de ciberseguridad."},
-                    {"role": "user", "content": prompt}
-                ],
-                temperature=0.2,
-                max_tokens=400
-            )
+            if model.startswith("gpt-4"):
+                response = client.chat.completions.create(
+                    model=model,
+                    messages=[
+                        {"role": "system", "content": "Eres un experto analista de ciberseguridad."},
+                        {"role": "user", "content": prompt}
+                    ],
+                    temperature=0.2,
+                    max_tokens=600
+                )
+            else:  # GPT-5 / GPT-5-mini
+                response = client.responses.create(
+                    model=model,
+                    input=f"Eres un experto analista de ciberseguridad.\n\n{prompt}",
+                    reasoning={"effort": "low"},
+                    text={"verbosity": "low"},
+                    max_output_tokens=600
+                )
 
             try:
-                parsed = json.loads(response.choices[0].message.content)
+                parsed = json.loads(extract_content(response, model_type=model))
+                print("==== PARSED MODEL OUTPUT ====")
+                print(parsed)
+                print("==========================")
             except json.JSONDecodeError:
-                parsed = {"raw": response.choices[0].message.content}
+                raw = extract_content(response, model_type=model)
+                print("==== RAW MODEL OUTPUT ====")
+                print(raw)
+                print("==========================")
+                parsed = {"raw": raw}
 
             exploit_results.append({
                 "packet_window": packet.get("window"),
                 "protocol": packet.get("protocol", "UNKNOWN"),
-                "payload_text": packet.get("payload_text",""),
+                "payload_text": packet.get("payload_text", ""),
                 "iocs": parsed
             })
 
-            solo_iocs.append(parsed)  # Para usar luego en el resumen
+            solo_iocs.append(parsed)
 
-        #Llamada al LLM para generar resumen del exploit
+        # Generar resumen del exploit
         summary_prompt = build_summary_prompt(exploit, solo_iocs)
-        print("---SUMMARY PROMPT---")
-        print(summary_prompt)
-        print("---END SUMMARY PROMPT---")
-        summary_response = client.chat.completions.create(
-            model="gpt-4",
-            messages=[
-                {"role": "system", "content": "Eres un experto analista de ciberseguridad."},
-                {"role": "user", "content": summary_prompt}
-            ],
-            temperature=0.2,
-            max_tokens=300
-        )
 
-        print("\n--- SALIDA RAW DEL LLM (RESUMEN) ---")
-        print(summary_response.choices[0].message.content)
-        print("--- FIN DE SALIDA RAW ---\n")
+        if model.startswith("gpt-4"):
+            summary_response = client.chat.completions.create(
+                model=model,
+                messages=[
+                    {"role": "system", "content": "Eres un experto analista de ciberseguridad."},
+                    {"role": "user", "content": summary_prompt}
+                ],
+                temperature=0.2,
+                max_tokens=500
+            )
+        else:
+            summary_response = client.responses.create(
+                model=model,
+                input=f"Eres un experto analista de ciberseguridad.\n\n{summary_prompt}",
+                reasoning={"effort": "low"},
+                text={"verbosity": "low"},
+                max_output_tokens=500
+            )
 
         try:
-            parsed = json.loads(summary_response.choices[0].message.content)
+            parsed = json.loads(extract_content(summary_response, model_type=model))
             resumen_exploit = parsed.get("resumen", "").strip()
-
         except json.JSONDecodeError:
-            # fallback si no es JSON
-            resumen_exploit = summary_response.choices[0].message.content.strip()
+            resumen_exploit = extract_content(summary_response, model_type=model).strip()
 
         results.append({
             "exploit_id": exploit.get("id") or exploit.get("cve"),
@@ -254,8 +299,9 @@ def analyze_exploits_with_llm(exploits, packets):
             "resumen_exploit": resumen_exploit
         })
 
-        # Debug: Solo procesamos un exploit por ahora
-        break
+        num_exploit += 1
+        if num_exploit == max_exploit:
+            break
 
     return results
 
@@ -352,7 +398,10 @@ def analyze_exploits_with_hf_api(exploits, packets, model_name="tiiuae/falcon-7b
 
     return results
 
-def process_ioc_analysis():
+def process_ioc_analysis(exploits_input_path=EXPLOITS_INPUT_PATH,
+                         packets_input_path=PACKETS_INPUT_PATH,
+                         iocs_output_path=IOCS_OUTPUT_PATH,
+                         model="gpt-4"):
     """
     Orquesta el flujo completo de análisis de IoCs para los exploits.
 
@@ -363,21 +412,22 @@ def process_ioc_analysis():
     
     :return: None
     """
-
+    
     print("\nCargando exploits y paquetes refinados...")
-    exploits = load_json(EXPLOITS_INPUT_PATH)
-    packets = load_json(PACKETS_INPUT_PATH)
+    exploits = load_json(exploits_input_path)
+    packets = load_json(packets_input_path)
 
-    #print("Ejecutando análisis de IoCs por exploit...")
-    #results = analyze_exploits_with_llm(exploits, packets)
+    print("Ejecutando análisis de IoCs por exploit...")
+    results = analyze_exploits_with_llm(exploits, packets, model=model)
 
-    #print(f"Guardando resultados en {IOCS_OUTPUT_PATH}...")
-    #save_json(results, IOCS_OUTPUT_PATH)
+    print(f"Guardando resultados en {iocs_output_path}...")
+    save_json(results, iocs_output_path)
 
     print("Ejecutando análisis opensource")
 
-    results = analyze_exploits_with_hf_api(exploits,packets)
-    save_json(results,BASE_DIR / "../output/opensource.json")
+    #Opensource
+    #results = analyze_exploits_with_hf_api(exploits,packets)
+    #save_json(results,BASE_DIR / "../output/opensource.json")
 
     print("\nAnálisis completado exitosamente.")
 

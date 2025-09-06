@@ -4,17 +4,16 @@ import html
 
 # Rutas
 BASE_DIR = Path(__file__).resolve().parent
-INPUT_PATH = BASE_DIR / "../output/iocs_por_exploit2.json"
-#OUTPUT_PATH = BASE_DIR / "../output/iocs_report.html"
-OUTPUT_PATH = BASE_DIR / "../output/iocs_report2.html"
+INPUT_PATH = BASE_DIR / "../output/iocs_por_exploit.json"
+OUTPUT_PATH = BASE_DIR / "../output/iocs_report.html"
 
 # Lectura del JSON
-def read_json():
-    with open(INPUT_PATH, "r", encoding="utf-8") as f:
+def read_json(iocs_input_path):
+    with open(iocs_input_path, "r", encoding="utf-8") as f:
         return json.load(f)
 
 # Creación del HTML
-def create_html(exploits_data):
+def create_html(exploits_data, output_path):
     html_content = """<!DOCTYPE html>
 <html lang="es">
 <head>
@@ -99,7 +98,7 @@ def create_html(exploits_data):
         <div class="exploit-details">
             <p><span class="field-label">Exploit:</span> {meta.get("exploit", "")}</p>
             <p><span class="field-label">Payload:</span> {meta.get("payload", "")}</p>
-            <p><span class="field-label">Shell Type:</span> {", ".join(meta.get("shell_type", []))}</p>
+            <p><span class="field-label">Shell Type:</span> {", ".join(str(st) for st in meta.get("shell_type", []))}</p>
             <p><span class="field-label">Fuente:</span> {meta.get("source", "")}</p>
             <p><span class="field-label">Ventana temporal:</span> {meta.get("start_timestamp")} → {meta.get("end_timestamp")}</p>
         </div>
@@ -118,10 +117,10 @@ def create_html(exploits_data):
                     <p><span class="field-label">Ventana:</span> {pkt_win.get("start")} → {pkt_win.get("end")}</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">{protocolo}</span></p>
                     <p><span class="field-label">Payload interpretado:</span> {payload_text or '<em>No disponible</em>'}</p>
-                    <p><span class="field-label">IPs:</span> {", ".join(iocs.get("ips", []))}</p>
-                    <p><span class="field-label">Puertos:</span> {", ".join(iocs.get("puertos", []))}</p>
-                    <p><span class="field-label">Comandos:</span> {", ".join(iocs.get("comandos", [])) or '—'}</p>
-                    <p><span class="field-label">URLs:</span> {", ".join(iocs.get("urls", [])) or '—'}</p>
+                    <p><span class="field-label">IPs:</span> {", ".join(str(ip) for ip in iocs.get("ips", []))}</p>
+                    <p><span class="field-label">Puertos:</span> {", ".join(str(p) for p in iocs.get("puertos", []))}</p>
+                    <p><span class="field-label">Comandos:</span> {", ".join(str(cmd) for cmd in iocs.get("comandos", [])) or '—'}</p>
+                    <p><span class="field-label">URLs:</span> {", ".join(str(url) for url in iocs.get("urls", [])) or '—'}</p>
                     <p><span class="field-label">Observaciones:</span> {iocs.get("observaciones", "")}</p>
                 </div>
             </li>"""
@@ -135,15 +134,14 @@ def create_html(exploits_data):
 </body>
 </html>"""
 
-    with open(OUTPUT_PATH, "w", encoding="utf-8") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         f.write(html_content)
 
 # Generador
-def generate_report():
-    exploits_data = read_json()
+def generate_report(iocs_input_path=INPUT_PATH, output_path=OUTPUT_PATH):
+    exploits_data = read_json(iocs_input_path)
     if exploits_data:
-        create_html(exploits_data)
-        print(f"Informe HTML generado en: {OUTPUT_PATH.resolve()}")
+        create_html(exploits_data, output_path)
+        print(f"Informe HTML generado en: {output_path.resolve()}")
     else:
         print("El archivo JSON está vacío o no se pudo cargar.")
-

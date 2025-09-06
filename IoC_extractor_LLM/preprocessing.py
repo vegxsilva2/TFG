@@ -14,7 +14,7 @@ PACKETS_OUTPUT_PATH = BASE_DIR / "../output/filtered_packets.json"
 FILTERED_PACKETS_OUTPUT_PATH = BASE_DIR / "../output/refined_packets.json"
 
 
-def parse_report(report_path, output_path=EXPLOITS_OUTPUT_PATH):
+def parse_report(report_path, output_path):
     """
     Parsea el archivo de reporte y extrae la información de exploits.
 
@@ -259,7 +259,7 @@ def serialize_packet(pkt, pkt_time, matched_window):
 
     return pkt_dict
 
-def extract_packets(pcap_path, time_windows=None, output_path=PACKETS_OUTPUT_PATH):
+def extract_packets(pcap_path, output_path, time_windows=None):
     """
     Filtra un archivo .pcap por ventanas temporales y extrae paquetes enriquecidos con metadatos.
 
@@ -279,9 +279,10 @@ def extract_packets(pcap_path, time_windows=None, output_path=PACKETS_OUTPUT_PAT
         try:
             pkt_time = datetime.fromtimestamp(float(pkt.sniff_timestamp), tz=timezone.utc)
             matched_window = find_matching_window(pkt_time, time_windows)
+
             if not matched_window:
                 continue
-
+            
             pkt_dict = serialize_packet(pkt, pkt_time, matched_window)
             packets.append(pkt_dict)
 
@@ -462,7 +463,7 @@ def select_representative_packets(packets, max_packets):
 
     return selected_packets
 
-def refine_packets(packets, top_n_ips=2,max_packets_per_window=5, output_path=FILTERED_PACKETS_OUTPUT_PATH):
+def refine_packets(packets, output_path, top_n_ips=2,max_packets_per_window=5):
     """
     Refina la lista de paquetes capturados eliminando tráfico irrelevante y seleccionando un subconjunto representativo por ventana temporal.
 
@@ -598,10 +599,10 @@ def preprocess_data(report_path=REPORT_PATH,
     :param packets_output_path: Ruta del archivo JSON donde se guardarán los paquetes extraídos.
     :return: None. Los resultados se escriben en los archivos especificados.
     """
-    exploits = parse_report(report_path)
+    exploits = parse_report(report_path,exploits_output_path)
     time_windows = extract_time_windows(exploits)
-    packets = extract_packets(pcap_path, time_windows)
-    refined_packets = refine_packets(packets)
+    packets = extract_packets(pcap_path, packets_output_path, time_windows)
+    refined_packets = refine_packets(packets,packets_output_path)
 
     print(f"\nPreprocesamiento completado.")
     print(f"Exploits guardados en: {exploits_output_path}")
