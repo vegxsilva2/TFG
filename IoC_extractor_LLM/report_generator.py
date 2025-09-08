@@ -114,7 +114,7 @@ def create_html(exploits_data, output_path):
             html_content += f"""
             <li class="packet">
                 <div>
-                    <p><span class="field-label">Ventana:</span> {pkt_win.get("start")} → {pkt_win.get("end")}</p>
+                    <p><span class="field-label">Timestamp:</span> {pkt_win.get("timestamp")}</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">{protocolo}</span></p>
                     <p><span class="field-label">Payload interpretado:</span> {payload_text or '<em>No disponible</em>'}</p>
                     <p><span class="field-label">IPs:</span> {", ".join(str(ip) for ip in iocs.get("ips", []))}</p>

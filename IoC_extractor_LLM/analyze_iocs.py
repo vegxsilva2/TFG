@@ -3,7 +3,6 @@ from openai import OpenAI
 import json
 import os
 from datetime import datetime, timezone
-from huggingface_hub import InferenceClient
 import requests
 import re
 
@@ -24,10 +23,6 @@ IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit2.json"
 # API Key. Algun dia lo pondré por variable de entorno pero hoy no va a ser
 OPENAI_API_KEY = "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"
 client = OpenAI(api_key=OPENAI_API_KEY)
-
-
-# Inicializar cliente Hugging Face Inference API
-hf_client = InferenceClient(token="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")
 
 def load_json(path):
     """
@@ -290,7 +285,7 @@ def analyze_exploits_with_llm(exploits, packets, model):
                 parsed = {"raw": raw}
 
             exploit_results.append({
-                "packet_window": packet.get("window"),
+                "packet_timestamp": packet.get("timestamp"),
                 "protocol": packet.get("protocol", "UNKNOWN"),
                 "payload_text": packet.get("payload_text", ""),
                 "iocs": parsed
