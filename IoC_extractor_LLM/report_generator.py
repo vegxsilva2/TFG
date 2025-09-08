@@ -106,7 +106,7 @@ def create_html(exploits_data, output_path):
         <ul class="packet-list">"""
 
         for pkt in exploit["iocs"]:
-            pkt_win = pkt.get("packet_window", {})
+            pkt_win = pkt.get("packet_timestamp", {})
             iocs = pkt.get("iocs", {})
             payload_text = pkt.get("payload_text", "")
             protocolo = pkt.get("protocol", "UNKNOWN")
@@ -114,7 +114,7 @@ def create_html(exploits_data, output_path):
             html_content += f"""
             <li class="packet">
                 <div>
-                    <p><span class="field-label">Timestamp:</span> {pkt_win.get("timestamp")}</p>
+                    <p><span class="field-label">Timestamp:</span> {pkt_win}</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">{protocolo}</span></p>
                     <p><span class="field-label">Payload interpretado:</span> {payload_text or '<em>No disponible</em>'}</p>
                     <p><span class="field-label">IPs:</span> {", ".join(str(ip) for ip in iocs.get("ips", []))}</p>

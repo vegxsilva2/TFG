@@ -20,8 +20,7 @@ PACKETS_INPUT_PATH = BASE_DIR / "../output/refined_packets.json"
 IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit2.json"
 
 
-# API Key. Algun dia lo pondré por variable de entorno pero hoy no va a ser
-OPENAI_API_KEY = "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"
+OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
 client = OpenAI(api_key=OPENAI_API_KEY)
 
 def load_json(path):
@@ -240,7 +239,7 @@ def analyze_exploits_with_llm(exploits, packets, model):
     Compatible con GPT-4, GPT-5 y Ollama.
     """
     results = []
-    max_exploit = 5
+    max_exploit = 3 #Dependiendo del modelo, a veces hay restricciones de tokens, por lo que no es posible analizar el archivo completo
     num_exploit = 0
 
     for exploit in exploits:
