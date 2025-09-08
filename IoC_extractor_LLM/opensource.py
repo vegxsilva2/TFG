@@ -1,21 +1,28 @@
-from transformers import AutoModelForCausalLM, AutoTokenizer
+import requests
 
-model_name = "fdtn-ai/Foundation-Sec-8B"
+def query_ollama(model: str, prompt: str) -> str:
+    """
+    Envía un prompt a un modelo de Ollama y devuelve la respuesta completa (sin streaming).
 
-# Tokenizer
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+    :param model: Nombre del modelo cargado en Ollama (ej: "deepseek-r1:7b")
+    :param prompt: Texto del prompt
+    :return: Respuesta generada por el modelo
+    """
+    url = "http://localhost:11434/api/generate"
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False
+    }
 
-# Modelo (usa device_map="auto" para GPU si tienes)
-model = AutoModelForCausalLM.from_pretrained(
-    model_name,
-    device_map="auto",
-    torch_dtype="auto",
-    trust_remote_code=True
-)
+    response = requests.post(url, json=payload)
+    response.raise_for_status()  # Lanza excepción si hay error HTTP
+    data = response.json()
 
-# Prueba de generación
-prompt = "Traduce al inglés: Hola Mundo"
-inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
+    return data.get("response", "").strip()
 
-outputs = model.generate(**inputs, max_new_tokens=100)
-print(tokenizer.decode(outputs[0], skip_special_tokens=True))
+
+# Ejemplo de uso
+if __name__ == "__main__":
+    result = query_ollama("deepseek-r1:7b", "Cuánto es 2+2, no quiro que me expliques tu razonamiento, solo dame la respuesta")
+    print("Respuesta del modelo:", result)

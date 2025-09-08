@@ -4,6 +4,9 @@ import json
 import os
 from datetime import datetime, timezone
 from huggingface_hub import InferenceClient
+import requests
+import re
+
 
 #Refinado el promt para obtener el output deseado -> DONE
 #Decidir si es necesario enviar todos los paquetes por exploit al LLM (aporta esto información extra?) -> DONE
@@ -103,6 +106,7 @@ NOTES:
  - Do not explain reliability or false positives.
  - Include any IPs, ports, payloads, commands, or URLs you find relevant.
  - Return only a JSON output following the exact format.
+ - Do not include your internal reasoning or thought process.
 
 EXPLOIT DETAILS:
 - ID: {exploit.get("id", "N/A")}
@@ -151,6 +155,7 @@ NOTES:
 - Write a continuous paragraph, detailed, please DO NOT write more than 100 words.
 - Include IPs, ports, payloads, commands, tools, attack sequence, suspicious activity.
 - Do NOT add recommendations, disclaimers, or any other JSON fields.
+- Do not include your internal reasoning or thought process.
 
 EXPLOIT:
 - ID: {exploit.get("id", "N/A")}
@@ -171,7 +176,7 @@ OUTPUT FORMAT:
 
 def extract_content(choice, model_type=None):
     """
-    Extrae el texto de una respuesta del modelo, compatible con GPT-4 y GPT-5.
+    Extrae el texto de una respuesta del modelo, compatible con GPT-4, GPT-5 y Ollama.
     """
     if hasattr(choice, "message") and hasattr(choice.message, "content"):
         content = choice.message.content
@@ -191,23 +196,43 @@ def extract_content(choice, model_type=None):
                     if getattr(c, "type", "") == "output_text":
                         texts.append(getattr(c, "text", ""))
         return "\n".join(texts)
+    elif isinstance(choice, dict) and "response" in choice:
+        # Ollama JSON response
+        raw_text = choice["response"].strip()
+        # Extraer bloque JSON encerrado entre ```json ... ```
+        match = re.search(r"```json\s*(\{.*?\})\s*```", raw_text, re.DOTALL)
+        if match:
+            try:
+                return json.loads(match.group(1))
+            except json.JSONDecodeError:
+                # Si no se puede parsear, devolver el texto crudo
+                return match.group(1)
+        else:
+            # Si no hay bloque JSON, devolver el texto crudo
+            return raw_text
     return ""
 
+
+def query_ollama(model: str, prompt: str) -> dict:
+    """
+    Realiza una llamada a Ollama REST API.
+    Devuelve el JSON completo de la respuesta.
+    """
+    url = "http://localhost:11434/api/generate"
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False,
+    }
+    response = requests.post(url, json=payload)
+    response.raise_for_status()
+    return response.json()
 
 
 def analyze_exploits_with_llm(exploits, packets, model):
     """
     Ejecuta el análisis de IoCs y resumen técnico de los exploits usando el LLM.
-
-    Para cada exploit:
-      - Selecciona los paquetes correspondientes.
-      - Construye un prompt por paquete y solicita al LLM los IoCs.
-      - Genera un resumen técnico global del exploit a partir de todos los IoCs.
-    Devuelve una lista con los resultados estructurados.
-
-    :param exploits: Lista de exploits procesados desde el reporte JSON.
-    :param packets: Lista de paquetes refinados obtenidos de las capturas PCAP.
-    :return: Lista de diccionarios con IoCs por exploit y su resumen técnico.
+    Compatible con GPT-4, GPT-5 y Ollama.
     """
     results = []
     max_exploit = 5
@@ -234,7 +259,7 @@ def analyze_exploits_with_llm(exploits, packets, model):
                     temperature=0.2,
                     max_tokens=600
                 )
-            else:  # GPT-5 / GPT-5-mini
+            elif model.startswith("gpt-5"):
                 response = client.responses.create(
                     model=model,
                     input=f"Eres un experto analista de ciberseguridad.\n\n{prompt}",
@@ -242,9 +267,18 @@ def analyze_exploits_with_llm(exploits, packets, model):
                     text={"verbosity": "low"},
                     max_output_tokens=600
                 )
+            else:  # Ollama
+                response = query_ollama(
+                    model=model,
+                    prompt=f"Eres un experto analista de ciberseguridad.\n\n{prompt}"
+                )
 
             try:
-                parsed = json.loads(extract_content(response, model_type=model))
+                content = extract_content(response, model_type=model)
+                if isinstance(content, dict):
+                    parsed = content
+                else:
+                    parsed = json.loads(content)
                 print("==== PARSED MODEL OUTPUT ====")
                 print(parsed)
                 print("==========================")
@@ -277,7 +311,7 @@ def analyze_exploits_with_llm(exploits, packets, model):
                 temperature=0.2,
                 max_tokens=500
             )
-        else:
+        elif model.startswith("gpt-5"):
             summary_response = client.responses.create(
                 model=model,
                 input=f"Eres un experto analista de ciberseguridad.\n\n{summary_prompt}",
@@ -285,9 +319,18 @@ def analyze_exploits_with_llm(exploits, packets, model):
                 text={"verbosity": "low"},
                 max_output_tokens=500
             )
+        else:  # Ollama
+            summary_response = query_ollama(
+                model=model,
+                prompt=f"Eres un experto analista de ciberseguridad.\n\n{summary_prompt}"
+            )
 
         try:
-            parsed = json.loads(extract_content(summary_response, model_type=model))
+            content = extract_content(summary_response, model_type=model)
+            if isinstance(content, dict):
+                parsed = content
+            else:
+                parsed = json.loads(content)
             resumen_exploit = parsed.get("resumen", "").strip()
         except json.JSONDecodeError:
             resumen_exploit = extract_content(summary_response, model_type=model).strip()
@@ -318,85 +361,6 @@ def save_json(data, path):
     with open(path, "w") as f:
         json.dump(data, f, indent=2)
 
-
-def analyze_exploits_with_hf_api(exploits, packets, model_name="tiiuae/falcon-7b-instruct"):
-    """
-    Igual que analyze_exploits_with_llm, pero usando la API de Hugging Face para un modelo abierto.
-    
-    :param exploits: Lista de exploits procesados desde el reporte JSON.
-    :param packets: Lista de paquetes refinados obtenidos de las capturas PCAP.
-    :param model_name: Nombre del modelo de HF a usar en la Inference API.
-    :return: Lista de diccionarios con IoCs por exploit y su resumen técnico.
-    """
-    results = []
-
-    for exploit in exploits:
-        matched_packets = match_packets_to_exploit(exploit, packets)
-        if not matched_packets:
-            continue
-
-        exploit_results = []
-        solo_iocs = []
-
-        for packet in matched_packets:
-            prompt = build_analysis_prompt(exploit, packet)
-
-            # Llamada al modelo vía API de HF
-            response = hf_client.text_generation(
-                model=model_name,
-                prompt=prompt,
-                max_new_tokens=400,
-                do_sample=False
-            )
-
-            generated_text = response[0]['generated_text']
-
-            try:
-                parsed = json.loads(generated_text)
-            except json.JSONDecodeError:
-                parsed = {"raw": generated_text}
-
-            exploit_results.append({
-                "packet_window": packet.get("window"),
-                "protocol": packet.get("protocol", "UNKNOWN"),
-                "payload_text": packet.get("payload_text",""),
-                "iocs": parsed
-            })
-
-            solo_iocs.append(parsed)
-
-        # Generar resumen del exploit
-        summary_prompt = build_summary_prompt(exploit, solo_iocs)
-        print("---SUMMARY PROMPT---")
-        print(summary_prompt)
-        print("---END SUMMARY PROMPT---")
-
-        summary_response = hf_client.text_generation(
-            model=model_name,
-            prompt=summary_prompt,
-            max_new_tokens=300,
-            do_sample=False
-        )
-
-        summary_text = summary_response[0]['generated_text']
-
-        try:
-            parsed = json.loads(summary_text)
-            resumen_exploit = parsed.get("resumen", "").strip()
-        except json.JSONDecodeError:
-            resumen_exploit = summary_text.strip()
-
-        results.append({
-            "exploit_id": exploit.get("id") or exploit.get("cve"),
-            "exploit_metadata": exploit,
-            "iocs": exploit_results,
-            "resumen_exploit": resumen_exploit
-        })
-
-        # Debug: solo procesamos un exploit por ahora
-        break
-
-    return results
 
 def process_ioc_analysis(exploits_input_path=EXPLOITS_INPUT_PATH,
                          packets_input_path=PACKETS_INPUT_PATH,
