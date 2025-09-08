@@ -169,42 +169,52 @@ OUTPUT FORMAT:
 """
     return prompt_template
 
-def extract_content(choice, model_type=None):
+def extract_content(response, model_type=None):
     """
     Extrae el texto de una respuesta del modelo, compatible con GPT-4, GPT-5 y Ollama.
     """
-    if hasattr(choice, "message") and hasattr(choice.message, "content"):
-        content = choice.message.content
-        # GPT-4
-        if isinstance(content, str):
-            return content
-        # GPT-5: lista de bloques
-        elif isinstance(content, list):
-            texts = [block.get("text", "") for block in content if block.get("type") == "text"]
-            return "\n".join(texts)
-    elif hasattr(choice, "output") and isinstance(choice.output, list):
-        # GPT-5 responses.create
+    # -------------------
+    # Soporte GPT-4 (Chat Completions clásicos)
+    # -------------------
+    if hasattr(response, "choices"):
+        first_choice = response.choices[0]
+        if hasattr(first_choice, "message") and hasattr(first_choice.message, "content"):
+            content = first_choice.message.content
+            if isinstance(content, str):
+                return content  # texto plano
+            elif isinstance(content, list):
+                # En GPT-5 o variantes, puede venir como lista de bloques
+                texts = [block.get("text", "") for block in content if block.get("type") == "text"]
+                return "\n".join(texts)
+
+    # -------------------
+    # Soporte GPT-5 (responses.create)
+    # -------------------
+    if hasattr(response, "output") and isinstance(response.output, list):
         texts = []
-        for item in choice.output:
+        for item in response.output:
             if hasattr(item, "content"):
                 for c in item.content:
                     if getattr(c, "type", "") == "output_text":
                         texts.append(getattr(c, "text", ""))
         return "\n".join(texts)
-    elif isinstance(choice, dict) and "response" in choice:
-        # Ollama JSON response
-        raw_text = choice["response"].strip()
-        # Extraer bloque JSON encerrado entre ```json ... ```
+
+    # -------------------
+    # Soporte Ollama (respuesta en dict con campo "response")
+    # -------------------
+    if isinstance(response, dict) and "response" in response:
+        raw_text = response["response"].strip()
+        # Intentar extraer bloque JSON entre ```json ... ```
         match = re.search(r"```json\s*(\{.*?\})\s*```", raw_text, re.DOTALL)
         if match:
             try:
                 return json.loads(match.group(1))
             except json.JSONDecodeError:
-                # Si no se puede parsear, devolver el texto crudo
                 return match.group(1)
         else:
-            # Si no hay bloque JSON, devolver el texto crudo
             return raw_text
+
+    # Fallback
     return ""
 
 
