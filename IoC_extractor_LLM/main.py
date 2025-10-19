@@ -1,7 +1,7 @@
 import argparse
 from pathlib import Path
 from preprocessing import preprocess_data
-from analyze_iocs import process_ioc_analysis
+from analyze_iocs import process_ioc_analysis, validate_model
 from report_generator import generate_report
 
 BASE_DIR = Path(__file__).resolve().parent
@@ -24,11 +24,15 @@ def main():
     parser.add_argument(
         "--model",
         required=False,
-        default="gpt-4",
-        help="Modelo LLM a usar (ej: gpt-4, gpt-5, gpt-5-mini)"
+        default="gpt-5-mini",
+        help="Modelo LLM a usar (ej: gpt-4, gpt-5, gpt-5-mini, deepseek-r1)"
     )
 
     args = parser.parse_args()
+
+    if not validate_model(args.model):
+        print(f"[!] No se pudo inicializar el modelo especificado. Abortando ejecución.")
+        return
 
     # Validar report-path
     if args.report_path:

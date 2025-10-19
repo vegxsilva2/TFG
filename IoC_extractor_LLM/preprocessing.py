@@ -179,9 +179,37 @@ def detect_protocol(packet):
         #"tcp", "udp"  # Solo como fallback
     ]
 
+    #1 Buscar en capas 
     for proto in protocol_priority:
         if proto in layers:
             return proto.upper()  # Uniformizamos a mayúsculas en el output
+        
+    # 2. Inferir por puertos si no se detectó en capas
+    port_protocol_map = {
+        20: "FTP-DATA", 21: "FTP",
+        22: "SSH", 23: "TELNET", 25: "SMTP",
+        53: "DNS", 67: "DHCP", 68: "DHCP", 69: "TFTP",
+        80: "HTTP", 110: "POP3", 123: "NTP",
+        135: "MSRPC", 137: "NETBIOS", 138: "NETBIOS", 139: "SMB",
+        143: "IMAP", 161: "SNMP", 389: "LDAP", 443: "HTTPS",
+        445: "SMB", 465: "SMTPS", 587: "SMTP", 636: "LDAPS",
+        993: "IMAPS", 995: "POP3S",
+        1433: "MSSQL", 1521: "ORACLEDB", 2049: "NFS",
+        2375: "DOCKER", 3306: "MYSQL", 3389: "RDP",
+        5432: "POSTGRESQL", 5900: "VNC", 6379: "REDIS",
+        8080: "HTTP-ALT", 8443: "HTTPS-ALT",
+    }
+
+    src_port = packet.get("src_port")
+    dst_port = packet.get("dst_port")
+    #print(src_port)
+    #print(dst_port)
+
+    # Priorizar el puerto destino (normalmente el servicio)
+    if dst_port in port_protocol_map:
+        return port_protocol_map[dst_port]
+    elif src_port in port_protocol_map:
+        return port_protocol_map[src_port]
 
     return "UNKNOWN"  # Si no hay protocolo relevante
 
@@ -227,7 +255,9 @@ def serialize_packet(pkt, pkt_time, matched_window):
     pkt_dict = {
         "timestamp": pkt_time.isoformat(),
         "window": matched_window,
-        "layers": {}
+        "layers": {},
+        "src_port": None,   
+        "dst_port": None
     }
 
     for layer in pkt.layers:
@@ -241,7 +271,19 @@ def serialize_packet(pkt, pkt_time, matched_window):
             except AttributeError:
                 continue
 
-    pkt_dict["protocol"] = detect_protocol(pkt_dict)
+    # Extraer puertos TCP/UDP solo si existe capa de transporte
+    if hasattr(pkt, "transport_layer") and pkt.transport_layer:
+        transport_layer = pkt.transport_layer.lower()
+        if transport_layer in ("tcp", "udp"):
+            try:
+                src = getattr(pkt[transport_layer], "srcport", None)
+                dst = getattr(pkt[transport_layer], "dstport", None)
+                pkt_dict["src_port"] = int(src) if src is not None else None
+                pkt_dict["dst_port"] = int(dst) if dst is not None else None
+            except Exception as e:
+                print(f"No se ha podido extraer puertos: {e}")
+
+        pkt_dict["protocol"] = detect_protocol(pkt_dict)
 
     # Extraer y decodificar el payload desde capa de aplicación o transporte
     payload_hex = None

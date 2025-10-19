@@ -118,7 +118,7 @@ def create_html(exploits_data, output_path):
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">{protocolo}</span></p>
                     <p><span class="field-label">Payload interpretado:</span> {payload_text or '<em>No disponible</em>'}</p>
                     <p><span class="field-label">IPs:</span> {", ".join(str(ip) for ip in iocs.get("ips", []))}</p>
-                    <p><span class="field-label">Puertos:</span> {", ".join(str(p) for p in iocs.get("puertos", []))}</p>
+                    <p><span class="field-label">Puertos:</span> {" → ".join(str(p) for p in iocs.get("puertos", []))}</p>
                     <p><span class="field-label">Comandos:</span> {", ".join(str(cmd) for cmd in iocs.get("comandos", [])) or '—'}</p>
                     <p><span class="field-label">URLs:</span> {", ".join(str(url) for url in iocs.get("urls", [])) or '—'}</p>
                     <p><span class="field-label">Observaciones:</span> {iocs.get("observaciones", "")}</p>

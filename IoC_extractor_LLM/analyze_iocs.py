@@ -5,6 +5,7 @@ import os
 from datetime import datetime, timezone
 import requests
 import re
+import subprocess
 
 
 #Refinado el promt para obtener el output deseado -> DONE
@@ -19,9 +20,66 @@ EXPLOITS_INPUT_PATH = BASE_DIR / "../output/exploits_output.json"
 PACKETS_INPUT_PATH = BASE_DIR / "../output/refined_packets.json"
 IOCS_OUTPUT_PATH = BASE_DIR / "../output/iocs_por_exploit2.json"
 
+api_key = os.getenv("OPENAI_API_KEY")
+client = OpenAI(api_key=api_key)
 
-OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
-client = OpenAI(api_key=OPENAI_API_KEY)
+
+#Model Validation
+
+def check_ollama_model_installed(model_name="deepseek-r1"):
+    """
+    Comprueba si el modelo local está instalado en Ollama.
+    """
+    try:
+        result = subprocess.run(["ollama", "list"], capture_output=True, text=True, check=True)
+        return model_name in result.stdout
+    except FileNotFoundError:
+        print("[ERROR] Ollama no está instalado o no se encuentra en el PATH del sistema.")
+        return False
+    except subprocess.CalledProcessError as e:
+        print(f"[ERROR] No se pudo ejecutar 'ollama list': {e}")
+        return False
+
+
+def verify_openai_key(model_name):
+    """
+    Verifica que el modelo de OpenAI es soportado y que la API Key de OpenAI esté configurada correctamente.
+    """
+    if model_name.lower() not in ["gpt-4", "gpt-5", "gpt-5-mini"]:
+        print("[!] Modelo de OpenAI no soportado: " + model_name)    
+        return False
+    api_key = os.getenv("OPENAI_API_KEY")
+    if not api_key:
+        print("[ERROR] No se encontró la variable de entorno OPENAI_API_KEY.")
+        print("        Establécela antes de continuar: export OPENAI_API_KEY='tu_api_key'")
+        return False
+    return True
+
+def validate_model(model_name):
+    """
+    Determina si el modelo solicitado está disponible y listo para usarse.
+    """
+    # Modelos locales
+    if model_name.lower() in ["deepseek-r1", "ollama", "local"]:
+        print(f"[INFO] Se ha seleccionado el modelo local '{model_name}'. Verificando instalación...")
+        if check_ollama_model_installed("deepseek-r1"):
+            print("[OK] Modelo local 'deepseek-r1' disponible.")
+            return True
+        else:
+            print("[ERROR] El modelo local 'deepseek-r1' no está instalado en Ollama.")
+            print("        Instálalo con: ollama pull deepseek-r1")
+            return False
+
+    # Modelos OpenAI
+    elif model_name.lower().startswith("gpt"):
+        print(f"[INFO] Se ha seleccionado un modelo OpenAI: {model_name}")
+        return verify_openai_key(model_name)
+
+    # Cualquier otro modelo desconocido
+    else:
+        print(f"[ERROR] Modelo '{model_name}' no reconocido.")
+        print("        Usa 'gpt-4', 'gpt-5', 'gpt-5-mini' o 'deepseek-r1'.")
+        return False
 
 def load_json(path):
     """
@@ -239,7 +297,7 @@ def analyze_exploits_with_llm(exploits, packets, model):
     Compatible con GPT-4, GPT-5 y Ollama.
     """
     results = []
-    max_exploit = 3 #Dependiendo del modelo, a veces hay restricciones de tokens, por lo que no es posible analizar el archivo completo
+    max_exploit = 1 #Dependiendo del modelo, a veces hay restricciones de tokens, por lo que no es posible analizar el archivo completo
     num_exploit = 0
 
     for exploit in exploits:
@@ -369,7 +427,7 @@ def save_json(data, path):
 def process_ioc_analysis(exploits_input_path=EXPLOITS_INPUT_PATH,
                          packets_input_path=PACKETS_INPUT_PATH,
                          iocs_output_path=IOCS_OUTPUT_PATH,
-                         model="gpt-4"):
+                         model="gpt-5-mini"):
     """
     Orquesta el flujo completo de análisis de IoCs para los exploits.
 
