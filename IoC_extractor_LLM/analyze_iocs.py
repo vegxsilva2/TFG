@@ -291,14 +291,14 @@ def query_ollama(model: str, prompt: str) -> dict:
     return response.json()
 
 
-def analyze_exploits_with_llm(exploits, packets, model):
+def analyze_exploits_with_llm(exploits, packets, model, max_exploit=None):
     """
     Ejecuta el análisis de IoCs y resumen técnico de los exploits usando el LLM.
     Compatible con GPT-4, GPT-5 y Ollama.
     """
     results = []
-    max_exploit = 1 #Dependiendo del modelo, a veces hay restricciones de tokens, por lo que no es posible analizar el archivo completo
     num_exploit = 0
+
 
     for exploit in exploits:
         matched_packets = match_packets_to_exploit(exploit, packets)
@@ -327,7 +327,7 @@ def analyze_exploits_with_llm(exploits, packets, model):
                     input=f"Eres un experto analista de ciberseguridad.\n\n{prompt}",
                     reasoning={"effort": "low"},
                     text={"verbosity": "low"},
-                    max_output_tokens=600
+                    max_output_tokens=800
                 )
             else:  # Ollama
                 response = query_ollama(
@@ -405,7 +405,7 @@ def analyze_exploits_with_llm(exploits, packets, model):
         })
 
         num_exploit += 1
-        if num_exploit == max_exploit:
+        if max_exploit is not None and num_exploit>=max_exploit:
             break
 
     return results
@@ -427,7 +427,8 @@ def save_json(data, path):
 def process_ioc_analysis(exploits_input_path=EXPLOITS_INPUT_PATH,
                          packets_input_path=PACKETS_INPUT_PATH,
                          iocs_output_path=IOCS_OUTPUT_PATH,
-                         model="gpt-5-mini"):
+                         model="gpt-5-mini",
+                         max_exploit=None):
     """
     Orquesta el flujo completo de análisis de IoCs para los exploits.
 
@@ -444,7 +445,7 @@ def process_ioc_analysis(exploits_input_path=EXPLOITS_INPUT_PATH,
     packets = load_json(packets_input_path)
 
     print("Ejecutando análisis de IoCs por exploit...")
-    results = analyze_exploits_with_llm(exploits, packets, model=model)
+    results = analyze_exploits_with_llm(exploits, packets, model=model, max_exploit=max_exploit)
 
     print(f"Guardando resultados en {iocs_output_path}...")
     save_json(results, iocs_output_path)

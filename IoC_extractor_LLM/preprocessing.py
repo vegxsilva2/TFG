@@ -37,7 +37,7 @@ def parse_report(report_path, output_path):
         report = json.loads(match.group(0)) if match else {}
 
     exploits = []
-
+    seen_keys = set()
     reports_list = report.get("reports", [])
 
 
@@ -60,6 +60,19 @@ def parse_report(report_path, output_path):
                 if len(timestamps) == 2:
                     exploit_info["start_timestamp"] = datetime.fromisoformat(timestamps[0]).replace(tzinfo=timezone.utc)
                     exploit_info["end_timestamp"] = datetime.fromisoformat(timestamps[1]).replace(tzinfo=timezone.utc)
+                
+                key = (
+                    str(exploit_info.get("id")),
+                    str(exploit_info.get("exploit")),
+                    str(exploit_info.get("payload")),
+                    str(exploit_info.get("start_timestamp","")),
+                    str(exploit_info.get("end_timestamp",""))
+                )
+
+                if key in seen_keys:
+                    continue
+
+                seen_keys.add(key)
                 exploits.append(exploit_info)
 
         #Procesar warnigns
@@ -79,6 +92,18 @@ def parse_report(report_path, output_path):
                     exploit_info["start_timestamp"] = datetime.fromisoformat(timestamps[0]).replace(tzinfo=timezone.utc)
                     exploit_info["end_timestamp"] = datetime.fromisoformat(timestamps[1]).replace(tzinfo=timezone.utc)
 
+                key = (
+                    str(exploit_info.get("id")),
+                    str(exploit_info.get("exploit")),
+                    str(exploit_info.get("payload")),
+                    str(exploit_info.get("start_timestamp", "")),
+                    str(exploit_info.get("end_timestamp", ""))
+                )
+
+                if key in seen_keys:
+                    continue
+
+                seen_keys.add(key)                
                 exploits.append(exploit_info)        
 
     with open(output_path, "w") as f:

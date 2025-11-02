@@ -69,6 +69,32 @@ def create_html(exploits_data, output_path):
             .exploit-block { padding: 20px; }
             .exploit-details { grid-template-columns: 1fr; gap: 8px; }
         }
+        .payload-container {
+            margin-top: 8px;
+        }
+
+        .payload-container summary {
+            cursor: pointer;
+            color: #007bff;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .payload {
+            display: block;              /* importante para que se apliquen los límites */
+            white-space: pre-wrap;       /* conserva saltos de línea */
+            word-break: break-all;       /* rompe incluso cadenas largas */
+            overflow-wrap: break-word;   /* compatibilidad extra */
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;            /* scroll vertical si es necesario */
+            overflow-x: hidden;          /* evitar scroll horizontal */
+        }
     </style>
 </head>
 <body>
@@ -81,18 +107,25 @@ def create_html(exploits_data, output_path):
     for exploit in exploits_data:
         meta = exploit["exploit_metadata"]
         resumen_html = exploit.get("resumen_exploit", {})
-        cve = ""
+        # Obtener las tres primeras referencias (CVE, OSVDB, BID o URL)
+        refs_html = ""
         if "references" in meta and isinstance(meta["references"], str):
-            for ref in eval(meta["references"]):
-                if ref[0] == "CVE":
-                    cve = f"CVE-{ref[1]}"
-                    break
+            try:
+                refs = eval(meta["references"])
+                if isinstance(refs, list):
+                    refs_html = ", ".join(f"{r[0]}-{r[1]}" if r[0] != "URL" else f"<a href='{r[1]}' target='_blank'>{r[1]}</a>"
+                                          for r in refs[:3])
+            except Exception:
+                refs_html = "<em>Referencias no disponibles</em>"
 
         html_content += f"""
     <div class="exploit-block">
         <div class="exploit-header">
             <div class="exploit-icon">🛡️</div>
-            <div class="exploit-title">{meta.get("id", "Sin ID")} <span class="badge">{cve or "Sin CVE"}</span></div>
+            <div class="exploit-title">
+                {meta.get("id", "Sin ID")}
+                <span class="badge">{refs_html or "Sin referencias"}</span>
+            </div>
         </div>
         <div class="summary">{resumen_html}</div>
         <div class="exploit-details">
@@ -116,7 +149,8 @@ def create_html(exploits_data, output_path):
                 <div>
                     <p><span class="field-label">Timestamp:</span> {pkt_win}</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">{protocolo}</span></p>
-                    <p><span class="field-label">Payload interpretado:</span> {payload_text or '<em>No disponible</em>'}</p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">{payload_text}</div>
                     <p><span class="field-label">IPs:</span> {", ".join(str(ip) for ip in iocs.get("ips", []))}</p>
                     <p><span class="field-label">Puertos:</span> {" → ".join(str(p) for p in iocs.get("puertos", []))}</p>
                     <p><span class="field-label">Comandos:</span> {", ".join(str(cmd) for cmd in iocs.get("comandos", [])) or '—'}</p>

@@ -1,0 +1,108 @@
+[
+  {
+    "exploit_id": "OSVDB-34700",
+    "exploit_metadata": {
+      "id": "OSVDB-34700",
+      "exploit": "multi/samba/usermap_script",
+      "payload": "cmd/unix/bind_netcat",
+      "references": "[['CVE', '2007-2447'], ['OSVDB', '34700'], ['BID', '23972'], ['URL', 'http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534'], ['URL', 'http://samba.org/samba/security/CVE-2007-2447.html']]",
+      "shell_type": [
+        "w",
+        "r"
+      ],
+      "source": "vulnerability",
+      "start_timestamp": "2024-10-17 10:07:27.278946+00:00",
+      "end_timestamp": "2024-10-17 10:07:43.435071+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-10-17T10:07:29.496525+00:00",
+        "protocol": "TCP",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            38293,
+            139
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [],
+          "observaciones": "SYN TCP desde 172.19.0.3:38293 hacia 172.19.0.2:139 (SMB/netbios) dentro de la ventana temporal del exploit multi/samba/usermap_script (payload cmd/unix/bind_netcat). Tr\u00e1fico sin carga \u00fatil capturada (SYN, opciones TCP: MSS=1460, TS=401504352, WS=7). Posible intento de conexi\u00f3n/explotaci\u00f3n inicial dirigida a puerto SMB."
+        }
+      },
+      {
+        "packet_timestamp": "2024-10-17T10:07:29.497055+00:00",
+        "protocol": "SMB",
+        "payload_text": "...TSMBr.....................2...1..LANMAN1.0..LM1.2X002..NT LANMAN 1.0..NT LM 0.12.",
+        "iocs": {
+          "raw": "{\n  \"ips\": [\"172.19.0.3\", \"172.19.0.2\"],\n  \"puertos\": [38293, 139],\n  \"payloads\": [\n    {\n      \"hex\": \"00:00:00:54:ff:53:4d:42:72:00:00:00:00:18:01:c0:00:00:00:00:00:00:00:00:00:00:00:00:00:00:2e:32:00:00:88:ca:00:31:00:02:4c:41:4e:4d:41:4e:31:2e:30:00:02:4c:4d:31:2e:32:58:30:30:32:00:02:4e:54:20:4c:41:4e:4d:41:4e:20:31:2e:30:00:02:4e:54:20:4c:4d:20:30:2e:31:32:00\",\n      \"text\": \"SMB Header + SMB command 0x72 (negotiate). Dialects: LANMAN1.0, LM1.2X002, NT LANMAN 1.0, NT LM 0.12\"\n    }\n  ],\n  \"comandos\": [],\n  \"urls\": [],\n  \"observaciones\": \"Tr\u00e1fico SMB (TCP 139) desde 172"
+        }
+      },
+      {
+        "packet_timestamp": "2024-10-17T10:07:31.103790+00:00",
+        "protocol": "TCP",
+        "payload_text": "echo UzKqd4cKwIaqwUCagTbV.",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            40103,
+            2425
+          ],
+          "payloads": [
+            {
+              "hex": "65:63:68:6f:20:55:7a:4b:71:64:34:63:4b:77:49:61:71:77:55:43:61:67:54:62:56:0a",
+              "raw": "6563686f20557a4b716434634b7749617177554361675462560a",
+              "ascii": "echo UzKqd4cKwIaqwUCagTbV."
+            }
+          ],
+          "comandos": [
+            "echo UzKqd4cKwIaqwUCagTbV."
+          ],
+          "urls": [
+            "http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534",
+            "http://samba.org/samba/security/CVE-2007-2447.html"
+          ],
+          "observaciones": "TCP desde 172.19.0.3:40103 -> 172.19.0.2:2425 contiene comando 'echo UzKqd4cKwIaqwUCagTbV.' en payload (hex decodificado). Contexto de exploit: multi/samba/usermap_script (bind_netcat) en ventana de pentesting."
+        }
+      },
+      {
+        "packet_timestamp": "2024-10-17T10:07:29.496539+00:00",
+        "protocol": "TCP",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            139,
+            38293
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534",
+            "http://samba.org/samba/security/CVE-2007-2447.html"
+          ],
+          "observaciones": "Trama TCP (SYN+ACK) desde 172.19.0.2:139 hacia 172.19.0.3:38293 indicando establecimiento de conexi\u00f3n al puerto SMB (139) en el periodo de prueba; no hay carga \u00fatil capturada en este paquete. Contexto de exploit: OSVDB-34700 (Samba usermap_script) / payload cmd/unix/bind_netcat."
+        }
+      },
+      {
+        "packet_timestamp": "2024-10-17T10:07:29.496549+00:00",
+        "protocol": "TCP",
+        "payload_text": "",
+        "iocs": {
+          "raw": "{\n  \"ips\": [\n    \"172.19.0.3\",\n    \"172.19.0.2\"\n  ],\n  \"puertos\": [\n    38293,\n    139\n  ],\n  \"payloads\": [\n    \"len=0 (no application payload)\",\n    \"tcp.options.raw=01:01:08:0a:17:ee:78:60:30:f7:c3:8d\",\n    \"tcp.options.timestamp.tsval=401504352\",\n    \"tcp.options.timestamp.tsecr=821543821\",\n    \"tcp.seq=1024933440\",\n    \"tcp.ack=3987147684\",\n    \"tcp.flags=ACK\",\n    \"tcp.window_size=64256\"\n  ],\n  \"comandos\": [],\n  \"urls\": [\n    \"http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534\",\n    \"http://samba.org/samba/security/CVE-2007-2447.html\"\n  ],\n  \"observaciones\": \"Tr\u00e1fico TCP desde 172.19.0.3:38293 hacia 172.19.0.2:139 dentro de la ventana temporal del exploit OSVDB-34700 (Samba usermap_script). Paquete observado es un ACK sin datos; opciones TCP incluyen timestamps (tsval=401504352,tsecr=821543821) y sec/ack visibles. Posible sesi\u00f3n de explotaci\u00f3n/salida de comandos relacionada al exploit documentado"
+        }
+      }
+    ],
+    "resumen_exploit": "Entre 2024-10-17 10:07:27\u201310:07:43 se observ\u00f3 actividad de exploit OSVDB-34700 (multi/samba/usermap_script) contra 172.19.0.2 desde 172.19.0.3: inicio con SYN desde 172.19.0.3:38293\u2192172.19.0.2:139 (SMB/NetBIOS), respuesta SYN+ACK y ACK con opciones TCP (TS=401504352), seguido de tr\u00e1fico SMB negotiate (dialectos LANMAN1.0, LM1.2X002, NT LANMAN 1.0, NT LM 0.12). Posteriormente 172.19.0.3:40103\u2192172.19.0.2:2425 conten\u00eda payload \"echo UzKqd4cKwIaqwUCagTbV.\" y se identific\u00f3 uso de payload cmd/unix/bind_netcat, indicativo de intento de ejecuci\u00f3n remota y enlace de shell."
+  }
+]

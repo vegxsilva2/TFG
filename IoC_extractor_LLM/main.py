@@ -28,6 +28,14 @@ def main():
         help="Modelo LLM a usar (ej: gpt-4, gpt-5, gpt-5-mini, deepseek-r1)"
     )
 
+    parser.add_argument(
+        "--max-exploit",
+        type=int,
+        required=False,
+        help="Número máximo de exploits a analizar. Si no se indica, se analizarán todos."
+    )
+
+
     args = parser.parse_args()
 
     if not validate_model(args.model):
@@ -81,7 +89,8 @@ def main():
         exploits_input_path=exploits_output,
         packets_input_path=packets_output,
         iocs_output_path=iocs_output,
-        model=args.model 
+        model=args.model,
+        max_exploit=args.max_exploit
     )
 
     print("\nGenerando el reporte...")
