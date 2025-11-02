@@ -49,7 +49,6 @@ def parse_report(report_path, output_path, allowed_sources=None):
             if not isinstance(section_entries, dict):
                 continue
 
-            # Convertir el nombre de la sección en una fuente más corta
             source = section_to_source.get(section_key, section_key)
 
             for entry_id, entries in section_entries.items():
