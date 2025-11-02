@@ -14,120 +14,79 @@ PACKETS_OUTPUT_PATH = BASE_DIR / "../output/filtered_packets.json"
 FILTERED_PACKETS_OUTPUT_PATH = BASE_DIR / "../output/refined_packets.json"
 
 
-def parse_report(report_path, output_path):
+def parse_report(report_path, output_path, allowed_sources=None):
     """
-    Parsea el archivo de reporte y extrae la información de exploits.
+    Parsea el archivo de reporte y extrae información de exploits.
 
-    La función abre el archivo de reporte, intenta cargar su contenido como JSON
-    y, en caso de error, recupera el primer objeto JSON válido encontrado.
-    Posteriormente recorre las secciones de vulnerabilidades y advertencias,
-    extrayendo los exploits, payloads, referencias y timestamps, y los almacena
-    en una lista. Finalmente guarda los resultados en un archivo JSON.
+    Procesa únicamente las secciones incluidas en allowed_sources,
+    que deben coincidir con las claves reales del JSON
+    (por ejemplo: ["vulnerabilities"] o ["vulnerabilities", "warnings"]).
+    """
+    if allowed_sources is None:
+        allowed_sources = ["vulnerabilities"]
 
-    :param path: Ruta del archivo de reporte a procesar.
-    :return: Lista de exploits con su información estructurada.
-    """    
-    with open(report_path, "r") as f:
+    with open(report_path, "r", encoding="utf-8") as f:
         raw_report = f.read()
-    
+
     try:
         report = json.loads(raw_report)
     except json.JSONDecodeError:
         match = re.search(r"{.*}", raw_report, re.DOTALL)
         report = json.loads(match.group(0)) if match else {}
 
-    exploits = []
-    seen_keys = set()
+    exploits, seen_keys = [], set()
     reports_list = report.get("reports", [])
-
+    section_to_source = {
+        "vulnerabilities": "vulnerability",
+        "warnings": "warning"
+    }
 
     for report_entry in reports_list:
         report_content = report_entry.get("report", {})
 
-        #Procesar vulnerabilidades
-        vulnerabilities = report_content.get("vulnerabilities", {})
-        for vuln_id, vuln_entries in vulnerabilities.items():
-            for entry in vuln_entries:
-                exploit_info = {
-                    "id": vuln_id,
-                    "exploit": entry.get("exploit"),
-                    "payload": entry.get("payload"),
-                    "references": entry.get("references"),
-                    "shell_type": entry.get("shell_type"),
-                    "source": "vulnerability"
-                }
-                timestamps = entry.get("timestamp", [])
-                if len(timestamps) == 2:
-                    exploit_info["start_timestamp"] = datetime.fromisoformat(timestamps[0]).replace(tzinfo=timezone.utc)
-                    exploit_info["end_timestamp"] = datetime.fromisoformat(timestamps[1]).replace(tzinfo=timezone.utc)
-                
-                key = (
-                    str(exploit_info.get("id")),
-                    str(exploit_info.get("exploit")),
-                    str(exploit_info.get("payload")),
-                    str(exploit_info.get("start_timestamp","")),
-                    str(exploit_info.get("end_timestamp",""))
-                )
+        for section_key in allowed_sources:
+            section_entries = report_content.get(section_key, {})
+            if not isinstance(section_entries, dict):
+                continue
 
-                if key in seen_keys:
-                    continue
+            # Convertir el nombre de la sección en una fuente más corta
+            source = section_to_source.get(section_key, section_key)
 
-                seen_keys.add(key)
-                exploits.append(exploit_info)
+            for entry_id, entries in section_entries.items():
+                for entry in entries:
+                    exploit_info = {
+                        "id": entry_id,
+                        "exploit": entry.get("exploit"),
+                        "payload": entry.get("payload"),
+                        "references": entry.get("references"),
+                        "shell_type": entry.get("shell_type"),
+                        "source": source
+                    }
 
-        #Procesar warnigns
-        warnings = report_content.get("warnings", {})
-        for warning_id, warning_entries in warnings.items():
-            for entry in warning_entries:
-                exploit_info = {
-                    "id": warning_id,
-                    "exploit": entry.get("exploit"),
-                    "payload": entry.get("payload"),
-                    "references": entry.get("references"),
-                    "shell_type": entry.get("shell_type"),
-                    "source": "warning"
-                }
-                timestamps = entry.get("timestamp", [])
-                if len(timestamps) == 2:
-                    exploit_info["start_timestamp"] = datetime.fromisoformat(timestamps[0]).replace(tzinfo=timezone.utc)
-                    exploit_info["end_timestamp"] = datetime.fromisoformat(timestamps[1]).replace(tzinfo=timezone.utc)
+                    # Procesar timestamps si existen
+                    timestamps = entry.get("timestamp", [])
+                    if len(timestamps) == 2:
+                        exploit_info["start_timestamp"] = datetime.fromisoformat(timestamps[0]).replace(tzinfo=timezone.utc)
+                        exploit_info["end_timestamp"] = datetime.fromisoformat(timestamps[1]).replace(tzinfo=timezone.utc)
 
-                key = (
-                    str(exploit_info.get("id")),
-                    str(exploit_info.get("exploit")),
-                    str(exploit_info.get("payload")),
-                    str(exploit_info.get("start_timestamp", "")),
-                    str(exploit_info.get("end_timestamp", ""))
-                )
+                    key = (
+                        str(exploit_info.get("id")),
+                        str(exploit_info.get("exploit")),
+                        str(exploit_info.get("payload")),
+                        str(exploit_info.get("start_timestamp", "")),
+                        str(exploit_info.get("end_timestamp", "")),
+                        str(exploit_info.get("source"))
+                    )
 
-                if key in seen_keys:
-                    continue
+                    if key not in seen_keys:
+                        seen_keys.add(key)
+                        exploits.append(exploit_info)
 
-                seen_keys.add(key)                
-                exploits.append(exploit_info)        
-
-    with open(output_path, "w") as f:
+    with open(output_path, "w", encoding="utf-8") as f:
         json.dump(exploits, f, indent=2, default=str)
 
     return exploits
 
-
-def filter_exploits_by_source(exploits, allowed_sources=None):
-    """
-    Filtra los exploits por su fuente (source).
-
-    Permite restringir los resultados a uno o varios tipos de fuente, por ejemplo
-    solo vulnerabilidades o también advertencias.
-
-    :param exploits: Lista de exploits procesados.
-    :param allowed_sources: Lista de tipos de fuente permitidos 
-                            ("vulnerability", "warning"). Por defecto ["vulnerability"].
-    :return: Lista de exploits filtrados.
-    """
-    if allowed_sources is None:
-        allowed_sources = ["vulnerability"]
-
-    return [e for e in exploits if e.get("source") in allowed_sources]
 
 
 def extract_time_windows(exploits):
@@ -650,7 +609,8 @@ def count_all_packets_in_windows(pcap_path, time_windows):
 def preprocess_data(report_path=REPORT_PATH,
                     pcap_path=PCAP_PATH,
                     exploits_output_path=EXPLOITS_OUTPUT_PATH,
-                    packets_output_path=PACKETS_OUTPUT_PATH):
+                    packets_output_path=PACKETS_OUTPUT_PATH,
+                    allowed_sources=None):
     """
     Punto de entrada principal para el procesamiento de datos de red.
 
@@ -666,7 +626,7 @@ def preprocess_data(report_path=REPORT_PATH,
     :param packets_output_path: Ruta del archivo JSON donde se guardarán los paquetes extraídos.
     :return: None. Los resultados se escriben en los archivos especificados.
     """
-    exploits = parse_report(report_path,exploits_output_path)
+    exploits = parse_report(report_path,exploits_output_path, allowed_sources)
     time_windows = extract_time_windows(exploits)
     packets = extract_packets(pcap_path, packets_output_path, time_windows)
     refined_packets = refine_packets(packets,packets_output_path)

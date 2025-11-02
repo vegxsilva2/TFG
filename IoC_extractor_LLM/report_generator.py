@@ -134,6 +134,7 @@ def create_html(exploits_data, output_path):
             <p><span class="field-label">Shell Type:</span> {", ".join(str(st) for st in meta.get("shell_type", []))}</p>
             <p><span class="field-label">Fuente:</span> {meta.get("source", "")}</p>
             <p><span class="field-label">Ventana temporal:</span> {meta.get("start_timestamp")} → {meta.get("end_timestamp")}</p>
+            <p><span class="field-label">Fuente:</span> {meta.get("source", "")}</p>
         </div>
         <h3>Paquetes asociados</h3>
         <ul class="packet-list">"""

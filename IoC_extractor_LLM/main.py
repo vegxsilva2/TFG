@@ -35,6 +35,13 @@ def main():
         help="Número máximo de exploits a analizar. Si no se indica, se analizarán todos."
     )
 
+    parser.add_argument(
+        "--warnings",
+        required=False,
+        action="store_true",
+        help="Añadir intentos de explotación fallidos al reporte."
+    )
+
 
     args = parser.parse_args()
 
@@ -76,12 +83,20 @@ def main():
     iocs_output = output_dir / "iocs.json"
     report_output = output_dir / "report.html"
 
+    #Determinar qué fuentes se deben incluir
+    if args.warnings:
+        print("[*] Se incluirán intentos de explotación fallidos en el análisis.")
+        allowed_sources = ["vulnerabilities", "warnings"]
+    else:
+        allowed_sources = ["vulnerabilities"]
+
     print("Iniciando preprocesamiento de datos...")
     preprocess_data(
         report_path=report_path,
         pcap_path=pcap_path,
         exploits_output_path=exploits_output,
-        packets_output_path=packets_output
+        packets_output_path=packets_output,
+        allowed_sources=allowed_sources
     )
 
     print("\nLlamando al modelo LLM para análisis de IoCs...")
