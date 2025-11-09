@@ -164,7 +164,7 @@ EXPLOIT DETAILS:
 - ID: {exploit.get("id", "N/A")}
 - CVE: {exploit.get("cve", "")}
 - Exploit: {exploit.get("exploit", "")}
-- Payload: {exploit.get("payload", "")}
+- Payload: {payload_text}
 - References: {exploit.get("references","")}
 - Shell Type: {exploit.get("shell_type", "")}
 - Source: {exploit.get("source", "")}
@@ -213,6 +213,7 @@ EXPLOIT:
 - ID: {exploit.get("id", "N/A")}
 - CVE: {exploit.get("cve", "")}
 - Payload: {exploit.get("payload", "")}
+- Protocol: {exploit.get("protocol","")}
 - Shell Type: {exploit.get("shell_type", "")}
 - Time Window: {exploit.get("start_timestamp")} → {exploit.get("end_timestamp")}
 
@@ -451,10 +452,6 @@ def process_ioc_analysis(exploits_input_path=EXPLOITS_INPUT_PATH,
     save_json(results, iocs_output_path)
 
     print("Ejecutando análisis opensource")
-
-    #Opensource
-    #results = analyze_exploits_with_hf_api(exploits,packets)
-    #save_json(results,BASE_DIR / "../output/opensource.json")
 
     print("\nAnálisis completado exitosamente.")
 

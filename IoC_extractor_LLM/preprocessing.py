@@ -416,48 +416,42 @@ def select_representative_packets(packets, max_packets):
              análisis posterior.
     """
     COMMON_PORTS = {
-        "20",  # FTP data
-        "21",  # FTP control
-        "22",  # SSH
-        "23",  # Telnet
-        "25",  # SMTP
-        "53",  # DNS
-        "80",  # HTTP
-        "110", # POP3
-        "143", # IMAP
-        "443", # HTTPS
+        "20", "21", "22", "23", "25", "53", "80", "110", "143", "443"
     }
 
-    selected_packets = []
     seen_combinations = set()
+    unique_layer_pkts = []
+    uncommon_port_pkts = []
+    fallback_pkts = []
 
-    # 1. Selección por combinación única de protocolos
-    for pkt in packets:
-        layers = tuple(pkt.get("layers", {}).keys())
-        if layers not in seen_combinations:
-            seen_combinations.add(layers)
-            selected_packets.append(pkt)
-            if len(selected_packets) >= max_packets:
-                return selected_packets
-
-    # 2. Selección por puerto destino no común
     for pkt in packets:
         layers = pkt.get("layers", {})
+        layer_tuple = tuple(layers.keys())
+
+        # Criterio 1: combinación de capas única
+        if layer_tuple not in seen_combinations:
+            seen_combinations.add(layer_tuple)
+            unique_layer_pkts.append(pkt)
+            continue
+
+        # Criterio 2: puertos destino no comunes
         dst_port = layers.get("tcp", {}).get("dstport") or layers.get("udp", {}).get("dstport")
+        if dst_port and dst_port not in COMMON_PORTS:
+            uncommon_port_pkts.append(pkt)
+            continue
 
-        if dst_port and dst_port not in COMMON_PORTS and pkt not in selected_packets:
-            selected_packets.append(pkt)
-            if len(selected_packets) >= max_packets:
-                return selected_packets
+        # Criterio 3: el resto
+        fallback_pkts.append(pkt)
 
-    # 3. Completar con los primeros paquetes restantes
-    for pkt in packets:
-        if pkt not in selected_packets:
-            selected_packets.append(pkt)
-            if len(selected_packets) >= max_packets:
-                break
+    # Construcción final según prioridades
+    selected = []
+    for group in (unique_layer_pkts, uncommon_port_pkts, fallback_pkts):
+        for pkt in group:
+            if len(selected) >= max_packets:
+                return selected
+            selected.append(pkt)
 
-    return selected_packets
+    return selected
 
 def refine_packets(packets, output_path, top_n_ips=2,max_packets_per_window=5):
     """
