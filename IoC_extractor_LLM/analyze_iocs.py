@@ -8,7 +8,7 @@ import re
 import subprocess
 
 
-#Refinado el promt para obtener el output deseado -> DONE
+#Refinado el prompt para obtener el output deseado -> DONE
 #Decidir si es necesario enviar todos los paquetes por exploit al LLM (aporta esto información extra?) -> DONE
 #   Solucion -> Coger 5 (o los que queramos) paquetes por exploit que sean lo más significativos y menos redundantes posible
 #Obtener el resultado para un exploit basándome en el número de paquetes decidido en la task anterior -> DONE
@@ -60,14 +60,14 @@ def validate_model(model_name):
     Determina si el modelo solicitado está disponible y listo para usarse.
     """
     # Modelos locales
-    if model_name.lower() in ["deepseek-r1", "ollama", "local"]:
+    if model_name.lower() in ["deepseek-r1:7b", "ollama", "local"]:
         print(f"[INFO] Se ha seleccionado el modelo local '{model_name}'. Verificando instalación...")
         if check_ollama_model_installed("deepseek-r1"):
             print("[OK] Modelo local 'deepseek-r1' disponible.")
             return True
         else:
-            print("[ERROR] El modelo local 'deepseek-r1' no está instalado en Ollama.")
-            print("        Instálalo con: ollama pull deepseek-r1")
+            print("[ERROR] El modelo local 'deepseek-r1:7b' no está instalado en Ollama.")
+            print("        Instálalo con: ollama pull deepseek-r1:7b")
             return False
 
     # Modelos OpenAI
@@ -159,6 +159,7 @@ NOTES:
  - Include any IPs, ports, payloads, commands, or URLs you find relevant.
  - Return only a JSON output following the exact format.
  - Do not include your internal reasoning or thought process.
+ - The answer must be completely in Spanish.
 
 EXPLOIT DETAILS:
 - ID: {exploit.get("id", "N/A")}
@@ -208,6 +209,7 @@ NOTES:
 - Include IPs, ports, payloads, commands, tools, attack sequence, suspicious activity.
 - Do NOT add recommendations, disclaimers, or any other JSON fields.
 - Do not include your internal reasoning or thought process.
+- The answer must be completely in Spanish.
 
 EXPLOIT:
 - ID: {exploit.get("id", "N/A")}
