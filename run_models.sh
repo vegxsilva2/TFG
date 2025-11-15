@@ -20,22 +20,28 @@ MODELS=(
     "deepseek-r1:7b"
 )
 
+INPUT_CAPTURE="/home/kali/Documentos/UMA/TFG/input/Reportes/18-10-2024/capture@eth1.pcap"
+INPUT_REPORT="/home/kali/Documentos/UMA/TFG/input/Reportes/18-10-2024/report.json"
+
 # Limpiar log anterior
 echo "=== Ejecutado el $(date) ===" > "$LOGFILE"
 
 echo "[INFO] Iniciando ejecuciones..."
 
 for MODEL in "${MODELS[@]}"; do
-    OUTPUT_DIR="${BASE_OUTPUT}/${MODEL}"
+    OUTPUT_DIR="${BASE_OUTPUT}/18-10-2024/${MODEL}"
 
     echo "[INFO] Ejecutando modelo: $MODEL"
     echo "[INFO] Output en: $OUTPUT_DIR"
 
     # Ejecutar el comando y capturar errores
     python3 "$SCRIPT" \
+	--report-path="$INPUT_REPORT"\
+	--pcap-path="$INPUT_CAPTURE"\
         --output-dir "$OUTPUT_DIR" \
         --model "$MODEL" \
-        --max-exploit "$MAX_EXPLOIT" 10>> "$LOGFILE"
+	--warnings \
+        --max-exploit "$MAX_EXPLOIT" >> "$LOGFILE" 2>&1
 
     # Comprobar código de salida
     if [ $? -ne 0 ]; then
