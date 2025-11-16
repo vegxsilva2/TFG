@@ -6,6 +6,7 @@ from datetime import datetime, timezone
 import requests
 import re
 import subprocess
+from toon import encode
 
 
 #Refinado el prompt para obtener el output deseado -> DONE
@@ -130,6 +131,34 @@ def match_packets_to_exploit(exploit, packets):
 
     return matched
 
+def compact_packet(packet):
+    # Intentamos obtener la IP y el Puerto de las capas detalladas o del nivel superior
+    ip_layer = packet.get("layers", {}).get("ip", {})
+    tcp_layer = packet.get("layers", {}).get("tcp", {})
+    
+    return {
+        "time": packet.get("timestamp"),
+        "proto": packet.get("protocol"),
+        "src": [ip_layer.get("src") or packet.get("source", {}).get("ip"), 
+                tcp_layer.get("srcport") or packet.get("source", {}).get("port")],
+        "dst": [ip_layer.get("dst") or packet.get("destination", {}).get("ip"),
+                tcp_layer.get("dstport") or packet.get("destination", {}).get("port")],
+        "data": packet.get("payload_text", ""),        
+        "ttl": ip_layer.get("ttl"),              # Time To Live (TTL)
+        "pkt_len": ip_layer.get("len"),          # Longitud total del paquete
+        "tcp_flags": tcp_layer.get("flags_str")  # Flags TCP (e.g., [SYN, ACK])
+    }
+
+def toon_encode(packet):
+    """
+    Combina el filtrado/compactación (Step 1) con la codificación TOON (Step 2).
+    """
+    # 1. FILTRAR: Reduce el tamaño del diccionario a solo IoCs relevantes.
+    compacted_data = compact_packet(packet)
+    
+    # 2. CODIFICAR: Convierte el pequeño diccionario a la cadena TOON.
+    return encode(compacted_data)
+
 def build_analysis_prompt(exploit, packet):
     """
     Construye el prompt para el LLM con la información de un exploit y un paquete.
@@ -172,7 +201,7 @@ EXPLOIT DETAILS:
 - Time Window: {exploit.get("start_timestamp")} to {exploit.get("end_timestamp")}
 
 TRACES:
-{json.dumps(packet, indent=2)}
+{json.dumps(toon_encode(packet), indent=2)}
 
 OUTPUT FORMAT (in JSON):
 {{

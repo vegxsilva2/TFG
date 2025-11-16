@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Informe de IoCs por Exploit</title>
+    <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;600&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Montserrat', sans-serif; margin: 0; background: #f4f7fa; color: #222; }
+        header { background: #003366; color: white; padding: 32px 0; text-align: center; }
+        header h1 { margin: 0; font-size: 2.5em; }
+        .container { max-width: 1100px; margin: auto; padding: 32px 16px; }
+
+        .exploit-block {
+            background: #fff; border-radius: 16px; box-shadow: 0 2px 16px rgba(0,52,102,0.07);
+            margin-bottom: 40px; padding: 32px; border-left: 8px solid #00b4d8;
+        }
+        .exploit-header { display: flex; align-items: center; gap: 18px; margin-bottom: 18px; }
+        .exploit-icon { font-size: 2em; color: #00b4d8; }
+        .exploit-title { font-size: 1.35em; font-weight: 600; color: #003366; }
+        .badge { background: #e3f7fc; color: #00b4d8; padding: 4px 12px; border-radius: 12px; font-weight: 600; }
+
+        .summary {
+            background: #f7fafc; border-left: 4px solid #00b4d8;
+            padding: 16px 18px; margin: 18px 0; border-radius: 8px;
+        }
+
+        .exploit-details {
+            display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 12px 32px; margin-bottom: 18px;
+        }
+        .exploit-details p { margin: 0; }
+        .field-label { font-weight: 600; color: #003366; }
+
+        h3 { color: #00b4d8; margin-top: 28px; }
+
+        .packet-list { list-style: none; padding: 0; }
+        .packet {
+            background: #f4f7fa; border-radius: 10px;
+            padding: 18px 20px; margin-bottom: 18px;
+            border-left: 4px solid #00b4d8;
+        }
+        .packet:hover { border-left-color: #003366; }
+
+        .protocolo-badge {
+            display: inline-block; background: #00b4d8; color: white;
+            border-radius: 8px; padding: 2px 10px; font-size: 0.95em;
+            font-weight: 600;
+        }
+        em { color: #888; }
+
+        @media (max-width: 900px) {
+            .container { padding: 18px 8px; }
+            .exploit-block { padding: 20px; }
+            .exploit-details { grid-template-columns: 1fr; gap: 8px; }
+        }
+        .payload-container {
+            margin-top: 8px;
+        }
+
+        .payload-container summary {
+            cursor: pointer;
+            color: #007bff;
+            font-weight: 600;
+            margin-bottom: 6px;
+        }
+
+        .payload {
+            display: block;              /* importante para que se apliquen los límites */
+            white-space: pre-wrap;       /* conserva saltos de línea */
+            word-break: break-all;       /* rompe incluso cadenas largas */
+            overflow-wrap: break-word;   /* compatibilidad extra */
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            font-family: monospace;
+            font-size: 0.9em;
+            max-height: 300px;
+            overflow-y: auto;            /* scroll vertical si es necesario */
+            overflow-x: hidden;          /* evitar scroll horizontal */
+        }
+    </style>
+</head>
+<body>
+<header>
+    <h1>Informe de Indicadores de Compromiso (IoCs)</h1>
+</header>
+<div class="container">
+
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                OSVDB-34700
+                <span class="badge">CVE-2007-2447, OSVDB-34700, BID-23972</span>
+            </div>
+        </div>
+        <div class="summary">El ataque se inició desde la IP 172.19.0.3 utilizando el puerto 38293 hacia la IP 172.19.0.2 en el puerto 139, intentando explotar la vulnerabilidad Samba 'username map script' (CVE-2007-2447) y la vulnerabilidad OSVDB-34700 (CVE-2007-2447) en el protocolo SMB. El ataque incluyó una solicitud SMB con versiones LANMAN y NT LANMAN, indicando un intento de autenticación antigua o débil. Posteriormente, el atacante intentó ejecutar un comando echo con una carga útil específica en el protocolo Samba a través del puerto 2425. No se identificaron cargas útiles, comandos o credenciales específicas en algunos paquetes de red capturados.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> multi/samba/usermap_script</p>
+            <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
+            <p><span class="field-label">Shell Type:</span> w, r</p>
+            <p><span class="field-label">Fuente:</span> vulnerability</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 10:07:27.278946+00:00 → 2024-10-17 10:07:43.435071+00:00</p>
+            <p><span class="field-label">Fuente:</span> vulnerability</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496525+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 38293 → 139</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad Samba 'username map script' (CVE-2007-2447) desde la IP 172.19.0.3 hacia la IP 172.19.0.2. No se observaron comandos o payloads específicos en los paquetes capturados.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.497055+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">SMB</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">...TSMBr.....................2...1..LANMAN1.0..LM1.2X002..NT LANMAN 1.0..NT LM 0.12.</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 38293 → 139</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad OSVDB-34700 (CVE-2007-2447) en el protocolo SMB. El atacante (172.19.0.3) intentó explotar la vulnerabilidad contra el objetivo (172.19.0.2) utilizando el puerto 139. La carga útil del ataque incluye una solicitud SMB con versiones LANMAN y NT LANMAN, lo que indica un intento de autenticación antigua o débil.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:31.103790+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">echo UzKqd4cKwIaqwUCagTbV.</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 40103 → 2425</p>
+                    <p><span class="field-label">Comandos:</span> echo</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad OSVDB-34700 en el protocolo Samba. El atacante intentó ejecutar un comando echo con una carga útil específica.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496539+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 139 → 38293</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad OSVDB-34700 (CVE-2007-2447) en el protocolo Samba. No se identificaron comandos o payloads específicos en las trazas de paquetes proporcionadas.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496549+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 38293 → 139</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un posible ataque de explotación de la vulnerabilidad OSVDB-34700 (CVE-2007-2447) en el protocolo Samba. El ataque se originó desde la IP 172.19.0.3 utilizando el puerto 38293 y se dirigió a la IP 172.19.0.2 en el puerto 139. No se identificaron cargas útiles, comandos o credenciales específicas en los paquetes de red capturados.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2007-2447
+                <span class="badge">CVE-2007-2447, OSVDB-34700, BID-23972</span>
+            </div>
+        </div>
+        <div class="summary">El atacante (172.19.0.3) intentó explotar la vulnerabilidad CVE-2007-2447 que afecta a Samba, dirigiéndose al objetivo (172.19.0.2) a través del puerto 139. Se identificó un intento de explotación del protocolo SMB utilizando el exploit multi/samba/usermap_script, con la carga útil del paquete conteniendo identificadores de protocolo SMB como LANMAN1.0 y NT LANMAN 1.0. Además, se utilizó un comando de shell (echo) para ejecutar un payload. En otro intento de explotación, el atacante (172.19.0.2) intentó establecer una conexión con el objetivo (172.19.0.3) a través de los puertos 139 y 38293.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> multi/samba/usermap_script</p>
+            <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
+            <p><span class="field-label">Shell Type:</span> w, r</p>
+            <p><span class="field-label">Fuente:</span> vulnerability</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 10:07:27.278946+00:00 → 2024-10-17 10:07:43.435071+00:00</p>
+            <p><span class="field-label">Fuente:</span> vulnerability</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496525+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 38293 → 139</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad CVE-2007-2447, que afecta a Samba. El atacante (172.19.0.3) intentó explotar la vulnerabilidad en el objetivo (172.19.0.2) a través del puerto 139. No se detectaron comandos o payloads específicos en las trazas proporcionadas.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.497055+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">SMB</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">...TSMBr.....................2...1..LANMAN1.0..LM1.2X002..NT LANMAN 1.0..NT LM 0.12.</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 38293 → 139</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad CVE-2007-2447, que afecta al protocolo SMB. El atacante (172.19.0.3) intentó explotar la vulnerabilidad en el objetivo (172.19.0.2) utilizando el exploit multi/samba/usermap_script. La carga útil del paquete contiene identificadores de protocolo SMB como LANMAN1.0 y NT LANMAN 1.0, que son indicativos de la versión del protocolo SMB utilizado.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:31.103790+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">echo UzKqd4cKwIaqwUCagTbV.</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 40103 → 2425</p>
+                    <p><span class="field-label">Comandos:</span> echo UzKqd4cKwIaqwUCagTbV</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un exploit (CVE-2007-2447) que afecta a Samba. Se utilizó un comando de shell (echo) para ejecutar un payload. Las IPs y puertos implicados sugieren una posible comunicación entre dos nodos internos.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496539+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 139 → 38293</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad CVE-2007-2447, que afecta a Samba. El atacante (172.19.0.2) intentó establecer una conexión con el objetivo (172.19.0.3) a través de los puertos 139 y 38293. No se identificaron comandos o payloads específicos en los paquetes de red capturados.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496549+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 38293 → 139</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad CVE-2007-2447, que afecta a Samba. El atacante (172.19.0.3) intentó explotar la vulnerabilidad contra el objetivo (172.19.0.2) utilizando el puerto 139. No se detectaron comandos o payloads específicos en los paquetes de red capturados.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                OSVDB-5786
+                <span class="badge">CVE-2004-2086, OSVDB-5786, BID-9607</span>
+            </div>
+        </div>
+        <div class="summary">El exploit intentó explotar la vulnerabilidad OSVDB-5786 en un sistema Windows, específicamente a través del exploit 'sambar6_search_results', desde la IP 172.19.0.3 hacia la IP 172.19.0.2, utilizando los puertos 36859 y 80. En un segundo intento, se detectó el envío de un payload malicioso codificado a través del protocolo HTTP. Posteriormente, se intentó explotar la misma vulnerabilidad en el servidor Apache/2.2.8 (Ubuntu) DAV/2 en la IP 172.19.0.2, puerto 80, a través de la URL /search/results.stm, que no se encontró en el servidor. En otro intento, el atacante envió el comando 'whoami' al objetivo. Finalmente, se detectó otro intento de explotación de la misma vulnerabilidad desde la IP 172.19.0.2 (puerto 80) hacia la IP 172.19.0.3 (puerto 36859), sin encontrar comandos, URLs o payloads en las trazas proporcionadas.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> windows/http/sambar6_search_results</p>
+            <p><span class="field-label">Payload:</span> generic/custom</p>
+            <p><span class="field-label">Shell Type:</span> w</p>
+            <p><span class="field-label">Fuente:</span> vulnerability</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 10:07:52.963047+00:00 → 2024-10-17 10:08:05.203944+00:00</p>
+            <p><span class="field-label">Fuente:</span> vulnerability</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.760380+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 36859 → 80</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad OSVDB-5786 en el sistema Windows, específicamente a través del exploit 'sambar6_search_results'. No se encontraron comandos, payloads ni URLs en los paquetes de red analizados.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.762275+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">GHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Accept-Ranges: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Referrer: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Connection: Keep-Alive..Pragma: no-cache..Content-Type: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Content-Length: 188....style=page&spage=0&indexname=docs&query=hh3w4XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXctcthh3w4</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 36859 → 80</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad OSVDB-5786 a través del protocolo HTTP. El atacante intentó enviar un payload malicioso al servidor. El payload parece estar codificado y puede contener comandos maliciosos o datos sensibles.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.762481+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">HTTP/1.1 404 Not Found..Date: Thu, 17 Oct 2024 10:07:55 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 297..Keep-Alive: timeout=15, max=100..Connection: Keep-Alive..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /search/results.stm was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at 172.19.0.2 Port 80</address>.</body></html>.</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 36859</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> /search/results.stm</p>
+                    <p><span class="field-label">Observaciones:</span> Se intentó explotar la vulnerabilidad OSVDB-5786 en el servidor Apache/2.2.8 (Ubuntu) DAV/2 en la IP 172.19.0.2, puerto 80. El intento de explotación fue a través de la URL /search/results.stm, que no se encontró en el servidor.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:08:03.195665+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">whoami.</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 40103 → 2425</p>
+                    <p><span class="field-label">Comandos:</span> whoami</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad OSVDB-5786 en el protocolo desconocido. El atacante (172.19.0.3) envió un comando 'whoami' al objetivo (172.19.0.2).</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.760402+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 36859</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad OSVDB-5786 (CVE-2004-2086) en el protocolo desconocido. El ataque se originó desde la IP 172.19.0.2 (puerto 80) hacia la IP 172.19.0.3 (puerto 36859). No se encontraron comandos, URLs o payloads en las trazas proporcionadas.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2004-2086
+                <span class="badge">CVE-2004-2086, OSVDB-5786, BID-9607</span>
+            </div>
+        </div>
+        <div class="summary">El ataque se inició con un intento de explotación de la vulnerabilidad CVE-2004-2086 desde la IP 172.19.0.3 hacia la IP 172.19.0.2 a través del puerto 80. Posteriormente, se detectó una solicitud HTTP maliciosa que contenía una carga útil codificada en hexadecimal, enviada desde la IP 172.19.0.3 al servidor en la IP 172.19.0.2, apuntando a la misma vulnerabilidad. El servidor respondió con un error 404, indicando que la URL solicitada no se encontró, lo que sugiere que el ataque pudo no haber tenido éxito. Sin embargo, se detectó la ejecución del comando 'whoami' desde la IP 172.19.0.3 hacia la IP 172.19.0.2, lo que indica una posible explotación exitosa. Finalmente, se observó tráfico de red entre las IPs 172.19.0.2 y 172.19.0.3 utilizando los puertos 80 y 36859, sin detectar ningún payload en los paquetes de red.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> windows/http/sambar6_search_results</p>
+            <p><span class="field-label">Payload:</span> generic/custom</p>
+            <p><span class="field-label">Shell Type:</span> w</p>
+            <p><span class="field-label">Fuente:</span> vulnerability</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 10:07:52.963047+00:00 → 2024-10-17 10:08:05.203944+00:00</p>
+            <p><span class="field-label">Fuente:</span> vulnerability</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.760380+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 36859 → 80</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad CVE-2004-2086 a través del puerto 80. El ataque se originó desde la IP 172.19.0.3 y se dirigió a la IP 172.19.0.2.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.762275+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">GHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Accept-Ranges: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Referrer: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Connection: Keep-Alive..Pragma: no-cache..Content-Type: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Content-Length: 188....style=page&spage=0&indexname=docs&query=hh3w4XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXctcthh3w4</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 36859 → 80</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó una explotación de la vulnerabilidad CVE-2004-2086 a través del protocolo HTTP. El atacante, desde la IP 172.19.0.3, envió una solicitud HTTP maliciosa al servidor en la IP 172.19.0.2. La solicitud contenía una carga útil codificada en hexadecimal, que parece ser parte de un exploit dirigido a la vulnerabilidad mencionada. No se identificaron comandos específicos en la carga útil.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.762481+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">HTTP/1.1 404 Not Found..Date: Thu, 17 Oct 2024 10:07:55 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 297..Keep-Alive: timeout=15, max=100..Connection: Keep-Alive..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /search/results.stm was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at 172.19.0.2 Port 80</address>.</body></html>.</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 36859</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> /search/results.stm</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad CVE-2004-2086 a través del exploit windows/http/sambar6_search_results. El servidor respondió con un error 404, indicando que la URL solicitada no se encontró. Esto puede sugerir que el ataque no tuvo éxito.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:08:03.195665+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">whoami.</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 40103 → 2425</p>
+                    <p><span class="field-label">Comandos:</span> whoami</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un exploit (CVE-2004-2086) en el protocolo desconocido que permitió la ejecución del comando 'whoami' desde la IP 172.19.0.3 hacia la IP 172.19.0.2. El ataque ocurrió en la ventana de tiempo especificada.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.760402+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 36859</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó tráfico de red entre las IPs 172.19.0.2 y 172.19.0.3 utilizando los puertos 80 y 36859 respectivamente. No se encontró ningún payload en los paquetes de red. El exploit relacionado es windows/http/sambar6_search_results, que se refiere a una vulnerabilidad (CVE-2004-2086) en el servidor Sambar en su función de resultados de búsqueda.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2010-4221
+                <span class="badge">CVE-2010-4221, OSVDB-68985, BID-44562</span>
+            </div>
+        </div>
+        <div class="summary">Se identificó un intento de explotación del CVE-2010-4221, un exploit de ProFTPd que utiliza el protocolo TELNET IAC. El ataque se originó desde la IP 172.19.0.3, puerto 40603, y se dirigió a la IP 172.19.0.2, puerto 21. Posteriormente, se detectó un intento de explotación del mismo CVE en el protocolo FTP, donde el atacante (172.19.0.2) intentó explotar una vulnerabilidad en vsFTPd 2.3.4 en el puerto 21. El destino del ataque fue 172.19.0.3 en el puerto 40603. En un tercer intento, el ataque se originó desde la IP 172.19.0.2 (puerto 21) hacia la IP 172.19.0.3 (puerto 40603). Finalmente, se detectó tráfico de red sospechoso entre las IPs 172.19.0.3 y 172.19.0.2, utilizando los puertos 40603 y 21 respectivamente. En todos los casos, no se encontraron payloads específicos en los paquetes de red.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/ftp/proftp_telnet_iac</p>
+            <p><span class="field-label">Payload:</span> generic/custom</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:56:46.428494+00:00 → 2024-10-17 09:56:51.496877+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:56:48.594589+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 40603 → 21</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2010-4221, un exploit de ProFTPd con el protocolo TELNET IAC. El ataque se originó desde la IP 172.19.0.3, puerto 40603, y se dirigió a la IP 172.19.0.2, puerto 21. No se detectaron comandos, payloads o URLs específicas en las trazas de paquetes proporcionadas.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:56:48.597686+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">FTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">220 (vsFTPd 2.3.4)..</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 21 → 40603</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2010-4221 en el protocolo FTP. El atacante (172.19.0.2) intentó explotar una vulnerabilidad en vsFTPd 2.3.4 en el puerto 21. El destino del ataque fue 172.19.0.3 en el puerto 40603.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:56:48.594605+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 21 → 40603</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2010-4221, un fallo en ProFTPd que permite la ejecución de comandos arbitrarios. El ataque se originó desde la IP 172.19.0.2 (puerto 21) hacia la IP 172.19.0.3 (puerto 40603). No se observaron comandos o payloads específicos en los paquetes capturados.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:56:48.598500+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">FTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">500 OOPS: </div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 21 → 40603</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad CVE-2010-4221 en el protocolo FTP. El atacante (172.19.0.2) intentó explotar el servidor FTP (172.19.0.3) a través del puerto 21. El servidor respondió con un mensaje de error '500 OOPS:', indicando un fallo en el intento de explotación.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:56:48.594618+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 40603 → 21</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó tráfico de red sospechoso entre las IPs 172.19.0.3 y 172.19.0.2, utilizando los puertos 40603 y 21 respectivamente. No se encontró ningún payload en los paquetes de red. El exploit asociado es 'linux/ftp/proftp_telnet_iac' (CVE-2010-4221), que puede permitir la ejecución remota de código en el servidor FTP ProFTPd.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2012-1182
+                <span class="badge">CVE-2012-1182, OSVDB-81303, BID-52973</span>
+            </div>
+        </div>
+        <div class="summary">El exploit CVE-2012-1182, una vulnerabilidad de desbordamiento de heap en Samba, fue detectado en la red. El atacante, con la dirección IP 172.19.0.2, intentó explotar esta vulnerabilidad enviando paquetes maliciosos a la dirección de broadcast 172.19.255.255. La carga útil de estos paquetes, ",.......... FHEPFCELEHFCEPFFFACACACACACACABN.. ..", parece contener datos hexadecimales, lo que indica un posible intento de ejecución de código remoto. No se identificaron comandos o URLs específicos en la carga útil, lo que sugiere que el ataque se centró en la explotación de la vulnerabilidad en sí.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/samba/setinfopolicy_heap</p>
+            <p><span class="field-label">Payload:</span> cmd/unix/bind_aws_instance_connect</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:57:01.343072+00:00 → 2024-10-17 09:57:06.416972+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:02.314085+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">,.......... FHEPFCELEHFCEPFFFACACACACACACABN.. ..</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.255.255</p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2012-1182, un fallo de seguridad en Samba. El atacante (172.19.0.2) intentó enviar un paquete malicioso a la dirección de broadcast (172.19.255.255).</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:02.314146+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">,.......... FHEPFCELEHFCEPFFFACACACACACACABN.. ..</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.255.255</p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un exploit (CVE-2012-1182) en el protocolo Samba. El atacante (172.19.0.2) intentó explotar una vulnerabilidad de desbordamiento de heap en el servidor Samba (172.19.255.255) utilizando un paquete de red con una carga útil específica. No se identificaron comandos o URLs específicos en la carga útil.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:04.316128+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">,.......... FHEPFCELEHFCEPFFFACACACACACACABN.. ..</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.255.255</p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un exploit (CVE-2012-1182) que afecta a Samba en Linux. El atacante (IP 172.19.0.2) intentó explotar una vulnerabilidad de desbordamiento de heap enviando un paquete malicioso a la dirección de broadcast (IP 172.19.255.255). El payload del paquete parece contener datos hexadecimales, que podrían ser parte de un intento de ejecución de código remoto.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2010-3856
+                <span class="badge">CVE-2010-3847, CVE-2010-3856, BID-44154</span>
+            </div>
+        </div>
+        <div class="summary">Se identificó un intento de explotación de la vulnerabilidad CVE-2010-3856, que busca escalar privilegios en sistemas Linux a través de glibc_ld_audit_dso_load_priv_esc. Los paquetes de red implicados originan desde la IP 172.19.0.2 y se dirigen a la IP 172.19.255.255. Se observó un tráfico anómalo y un payload desconocido en la comunicación entre estas IPs. Además, se detectó que el atacante podría estar utilizando información de URLs de seguimiento de seguridad y listas de divulgación completa, incluyendo seclists.org y security-tracker.debian.org, para ejecutar el ataque.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/local/glibc_ld_audit_dso_load_priv_esc</p>
+            <p><span class="field-label">Payload:</span> generic/custom</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:57:15.842079+00:00 → 2024-10-17 09:57:20.919110+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:17.329449+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">,)......... ABACFPFPENFDECFCEPFHFDEFFPFPACAB.. .... ............</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.255.255</p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> https://seclists.org/fulldisclosure/2010/Oct/257, https://seclists.org/fulldisclosure/2010/Oct/344, https://www.ubuntu.com/usn/usn-1009-1, https://security-tracker.debian.org/tracker/CVE-2010-3847, https://security-tracker.debian.org/tracker/CVE-2010-3856, https://access.redhat.com/security/cve/CVE-2010-3847, https://access.redhat.com/security/cve/CVE-2010-3856</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un posible exploit (CVE-2010-3856) que intenta escalar privilegios en sistemas Linux a través de glibc_ld_audit_dso_load_priv_esc. La traza de paquetes muestra una comunicación desde la IP 172.19.0.2 hacia la IP 172.19.255.255 con un payload desconocido. Las referencias a URLs de seguimiento de seguridad y listas de divulgación completa sugieren que el atacante puede estar utilizando información de estas fuentes para llevar a cabo el ataque.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:17.329509+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">,)......... ABACFPFPENFDECFCEPFHFDEFFPFPACAB.. .... ............</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.255.255</p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> https://seclists.org/fulldisclosure/2010/Oct/257, https://seclists.org/fulldisclosure/2010/Oct/344, https://www.ubuntu.com/usn/usn-1009-1, https://security-tracker.debian.org/tracker/CVE-2010-3847, https://security-tracker.debian.org/tracker/CVE-2010-3856, https://access.redhat.com/security/cve/CVE-2010-3847, https://access.redhat.com/security/cve/CVE-2010-3856</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un posible exploit (CVE-2010-3856) que intenta escalar privilegios en sistemas Linux a través de glibc. La traza de paquetes muestra un tráfico anómalo desde la IP 172.19.0.2 hacia la dirección de broadcast 172.19.255.255.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:19.331144+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">,)......... ABACFPFPENFDECFCEPFHFDEFFPFPACAB.. .... ............</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.255.255</p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> https://seclists.org/fulldisclosure/2010/Oct/257, https://seclists.org/fulldisclosure/2010/Oct/344, https://www.ubuntu.com/usn/usn-1009-1, https://security-tracker.debian.org/tracker/CVE-2010-3847, https://security-tracker.debian.org/tracker/CVE-2010-3856, https://access.redhat.com/security/cve/CVE-2010-3847, https://access.redhat.com/security/cve/CVE-2010-3856</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad CVE-2010-3856, que permite la escalada de privilegios en sistemas Linux a través de glibc_ld_audit_dso_load_priv_esc. Los paquetes de red implicados provienen de la IP 172.19.0.2 y se dirigen a la IP 172.19.255.255.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:19.331215+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">,)......... FHEPFCELEHFCEPFFFACACACACACACABN.. .... .............</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.255.255</p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> https://seclists.org/fulldisclosure/2010/Oct/257, https://seclists.org/fulldisclosure/2010/Oct/344, https://www.ubuntu.com/usn/usn-1009-1, https://security-tracker.debian.org/tracker/CVE-2010-3847, https://security-tracker.debian.org/tracker/CVE-2010-3856, https://access.redhat.com/security/cve/CVE-2010-3847, https://access.redhat.com/security/cve/CVE-2010-3856</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación de la vulnerabilidad CVE-2010-3856, que permite la escalada de privilegios en sistemas Linux a través de glibc_ld_audit_dso_load_priv_esc. Los paquetes de red implicados provienen de la IP 172.19.0.2 y se dirigen a la IP 172.19.255.255.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2011-4862
+                <span class="badge">CVE-2011-4862, OSVDB-78020, BID-51182</span>
+            </div>
+        </div>
+        <div class="summary">Se identificó un intento de explotación del CVE-2011-4862, una vulnerabilidad en la encriptación de telnet. El atacante, desde la IP 172.19.0.3, intentó establecer una conexión telnet en el puerto 23 del objetivo, la IP 172.19.0.2. Posteriormente, el atacante, ahora desde la IP 172.19.0.2, intentó explotar la misma vulnerabilidad en el puerto 23 del objetivo, la IP 172.19.0.3, utilizando el payload '. #', característico de este tipo de ataque. En todos los intentos, no se detectaron comandos específicos en los paquetes de red capturados. Las trazas de paquetes indican una comunicación constante entre las IPs 172.19.0.2 y 172.19.0.3 a través de los puertos 23 y 44759.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/telnet/telnet_encrypt_keyid</p>
+            <p><span class="field-label">Payload:</span> generic/custom</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:58:13.807075+00:00 → 2024-10-17 09:58:23.899402+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:15.957231+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 44759 → 23</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2011-4862, un fallo en la encriptación de telnet. El atacante (172.19.0.3) intentó establecer una conexión telnet en el puerto 23 del objetivo (172.19.0.2). No se detectaron comandos o payloads específicos en los paquetes de red capturados.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:15.966218+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">TELNET</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">. #'</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 23 → 44759</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2011-4862 a través del protocolo TELNET. El atacante (172.19.0.2) intentó explotar la vulnerabilidad en el puerto 23 del objetivo (172.19.0.3). El payload utilizado fue '. #', que es característico de este tipo de ataque.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:15.957246+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 23 → 44759</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2011-4862, un fallo en el protocolo de cifrado de Telnet. El atacante (172.19.0.2) intentó establecer una conexión con el objetivo (172.19.0.3) a través del puerto 23, comúnmente utilizado por Telnet. No se identificaron comandos o payloads específicos en los paquetes de red proporcionados.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:15.966409+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 23 → 44759</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2011-4862, un fallo de seguridad en el protocolo telnet. El atacante (172.19.0.2) intentó explotar esta vulnerabilidad en el puerto 23 del objetivo (172.19.0.3). No se detectaron comandos o payloads específicos en las trazas de paquetes proporcionadas.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:15.966436+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 23 → 44759</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un posible exploit (CVE-2011-4862) que afecta a linux/telnet/telnet_encrypt_keyid. Las trazas de paquetes indican una comunicación entre las IPs 172.19.0.2 y 172.19.0.3 a través de los puertos 23 y 44759. No se identificaron comandos, URLs o payloads específicos en las trazas proporcionadas.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2006-3747
+                <span class="badge">CVE-2006-3747, OSVDB-27588, BID-19204</span>
+            </div>
+        </div>
+        <div class="summary">Se detectó un intento de explotación del CVE-2006-3747, una vulnerabilidad en el módulo mod_rewrite de Apache que permite a un atacante remoto ejecutar comandos arbitrarios a través de un servidor LDAP. El ataque se originó desde la IP 172.19.0.3 y se dirigió a la IP 172.19.0.2 en el puerto 80. El atacante intentó acceder a la ruta /rewrite_path/ldap://localhost/ con un payload específico que podría causar un desbordamiento de búfer en el servidor Apache. La respuesta del servidor fue un error 404, lo que indica que el recurso solicitado no se encontró. Posteriormente, se detectó un intento de explotación desde la IP 172.19.0.2 dirigido al puerto 46273 de la IP 172.19.0.3. No se identificaron comandos o payloads específicos en los paquetes de red capturados.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> windows/http/apache_mod_rewrite_ldap</p>
+            <p><span class="field-label">Payload:</span> generic/custom</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:58:33.290970+00:00 → 2024-10-17 09:58:45.536054+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:36.059645+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 46273 → 80</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://archives.neohapsis.com/archives/bugtraq/2006-07/0514.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2006-3747, un fallo en el módulo mod_rewrite de Apache que permite a un atacante remoto ejecutar comandos arbitrarios a través de un servidor LDAP. El ataque se originó desde la IP 172.19.0.3 y se dirigió a la IP 172.19.0.2 en el puerto 80.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:36.059772+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">GET /rewrite_path/ldap://localhost/%3fA%3fA%3fCCCCCCCCCC%3fC%3f%90T HTTP/1.0..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c277-device..User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.47....</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 46273 → 80</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> /rewrite_path/ldap://localhost/%3fA%3fA%3fCCCCCCCCCC%3fC%3f%90T</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2006-3747 a través del módulo apache_mod_rewrite_ldap. El atacante intentó acceder a la ruta /rewrite_path/ldap://localhost/ con un payload específico que podría causar un desbordamiento de búfer en el servidor Apache.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:36.060137+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">HTTP/1.1 404 Not Found..Date: Thu, 17 Oct 2024 09:58:36 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 374..Connection: close..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /rewrite_path/ldap://localhost/?A?A?CCCCCCCCCC?C?T was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c277-device Port 80</address>.</body></html>.</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 46273</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> /rewrite_path/ldap://localhost/?A?A?CCCCCCCCCC?C?T</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2006-3747, que afecta a Apache mod_rewrite. El atacante intentó acceder a una URL que contiene una cadena LDAP, lo que indica un intento de inyección LDAP. La respuesta del servidor fue un error 404, lo que indica que el recurso solicitado no se encontró.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:36.059659+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 46273</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://archives.neohapsis.com/archives/bugtraq/2006-07/0514.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2006-3747, un fallo en el módulo mod_rewrite de Apache que permite a un atacante remoto ejecutar comandos arbitrarios. El ataque se originó desde la IP 172.19.0.2 y se dirigió al puerto 46273 de la IP 172.19.0.3. No se identificaron comandos o payloads específicos en los paquetes de red capturados.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:36.059780+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 46273</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://archives.neohapsis.com/archives/bugtraq/2006-07/0514.html</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un posible exploit (CVE-2006-3747) que afecta a apache_mod_rewrite_ldap en Windows. No se encontraron comandos o payloads específicos en los paquetes de red analizados.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2001-0168
+                <span class="badge">BID-2306, OSVDB-6280, CVE-2001-0168</span>
+            </div>
+        </div>
+        <div class="summary">Se identificó un intento de explotación del CVE-2001-0168, un exploit de Windows VNC, desde la IP 172.19.0.3 hacia la IP 172.19.0.2 a través del puerto 45127 hacia el puerto 5800. Posteriormente, se detectó un segundo intento de explotación del mismo CVE, conocido como 'winvnc_http_get', originándose desde la IP 172.19.0.2 y el puerto 5800, dirigiéndose a la IP 172.19.0.3 y el puerto 45127. En ambos casos, no se detectaron payloads, comandos o URLs específicas en las trazas de paquetes proporcionadas.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> windows/vnc/winvnc_http_get</p>
+            <p><span class="field-label">Payload:</span> generic/custom</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:59:09.581075+00:00 → 2024-10-17 09:59:21.811176+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:59:12.358603+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 45127 → 5800</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2001-0168, un exploit de Windows VNC, desde la IP 172.19.0.3 hacia la IP 172.19.0.2. El ataque se realizó a través del puerto 45127 hacia el puerto 5800. No se detectaron payloads, comandos o URLs específicas en las trazas de paquetes proporcionadas.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:59:12.358617+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 5800 → 45127</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Se detectó un intento de explotación del CVE-2001-0168, un exploit conocido como 'winvnc_http_get' que afecta a Windows VNC. El ataque se originó desde la IP 172.19.0.2 y el puerto 5800, y se dirigió a la IP 172.19.0.3 y el puerto 45127. No se identificaron comandos o payloads específicos en los paquetes de red proporcionados.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+</div>
+</body>
+</html>

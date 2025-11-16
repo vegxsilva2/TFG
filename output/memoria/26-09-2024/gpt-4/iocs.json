@@ -1,0 +1,868 @@
+[
+  {
+    "exploit_id": "CVE-2020-11698",
+    "exploit_metadata": {
+      "id": "CVE-2020-11698",
+      "exploit": "freebsd/webapp/spamtitan_unauth_rce",
+      "payload": "cmd/unix/bind_netcat",
+      "references": "[['EDB', '48856'], ['URL', 'https://www.titanhq.com/spamtitan/spamtitangateway/'], ['CVE', '2020-11698']]",
+      "shell_type": [],
+      "source": "warning",
+      "start_timestamp": "2024-09-25 10:25:11.126497+00:00",
+      "end_timestamp": "2024-09-25 10:25:16.285574+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-09-25T10:25:13.522422+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "35433",
+            "80"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://www.titanhq.com/spamtitan/spamtitangateway/"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2020-11698 en Spamtitan, que permite la ejecuci\u00f3n remota de c\u00f3digo sin autenticaci\u00f3n. El ataque se origin\u00f3 desde la IP 172.19.0.3 utilizando el puerto 35433 y se dirigi\u00f3 a la IP 172.19.0.2 en el puerto 80."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:25:13.522703+00:00",
+        "protocol": "HTTP",
+        "payload_text": "GET /snmp-x.php HTTP/1.1..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device..User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36....",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "35433",
+            "80"
+          ],
+          "payloads": [
+            "GET /snmp-x.php HTTP/1.1..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device..User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36...."
+          ],
+          "comandos": [
+            "GET /snmp-x.php HTTP/1.1"
+          ],
+          "urls": [
+            "https://www.titanhq.com/spamtitan/spamtitangateway/"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2020-11698 en el sistema Spamtitan. El atacante intent\u00f3 acceder al archivo 'snmp-x.php' sin autorizaci\u00f3n, utilizando un agente de usuario de navegador web. La direcci\u00f3n IP del atacante es 172.19.0.3 y el puerto es 35433. El servidor objetivo tiene la direcci\u00f3n IP 172.19.0.2 y el puerto 80."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:25:13.523263+00:00",
+        "protocol": "HTTP",
+        "payload_text": "HTTP/1.1 404 Not Found..Date: Wed, 25 Sep 2024 10:25:13 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 329..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /snmp-x.php was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device Port 80</address>.</body></html>.",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "80",
+            "35433"
+          ],
+          "payloads": [
+            "HTTP/1.1 404 Not Found..Date: Wed, 25 Sep 2024 10:25:13 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 329..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /snmp-x.php was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device Port 80</address>.</body></html>."
+          ],
+          "comandos": [],
+          "urls": [
+            "/snmp-x.php"
+          ],
+          "observaciones": "Se intent\u00f3 acceder a la URL /snmp-x.php, que no se encontr\u00f3 en el servidor. El servidor es Apache/2.2.8 (Ubuntu) DAV/2. El exploit utilizado es freebsd/webapp/spamtitan_unauth_rce, que se refiere a una ejecuci\u00f3n remota de c\u00f3digo sin autenticaci\u00f3n en Spamtitan, una puerta de enlace de seguridad de correo electr\u00f3nico. El CVE asociado es CVE-2020-11698."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:25:13.522447+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "80",
+            "35433"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://www.titanhq.com/spamtitan/spamtitangateway/"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n del CVE-2020-11698, un RCE no autenticado en Spamtitan. Los paquetes de red implicados fueron enviados desde la IP 172.19.0.2 (puerto 80) hacia la IP 172.19.0.3 (puerto 35433). No se identificaron comandos o payloads espec\u00edficos en los paquetes."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:25:13.522724+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "80",
+            "35433"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://www.titanhq.com/spamtitan/spamtitangateway/"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n del CVE-2020-11698, un RCE no autenticado en Spamtitan. No se observaron comandos o payloads espec\u00edficos en las trazas proporcionadas."
+        }
+      }
+    ],
+    "resumen_exploit": "El exploit CVE-2020-11698 fue detectado en un intento de ejecuci\u00f3n remota de c\u00f3digo sin autenticaci\u00f3n en Spamtitan, origin\u00e1ndose desde la IP 172.19.0.3 utilizando el puerto 35433 y dirigido a la IP 172.19.0.2 en el puerto 80. El atacante intent\u00f3 acceder sin autorizaci\u00f3n al archivo 'snmp-x.php' a trav\u00e9s de un agente de usuario de navegador web. Sin embargo, el servidor Apache/2.2.8 (Ubuntu) DAV/2 respondi\u00f3 con un error 404, indicando que la URL /snmp-x.php no se encontr\u00f3. A pesar de los intentos de explotaci\u00f3n, no se identificaron comandos o payloads espec\u00edficos en los paquetes de red."
+  },
+  {
+    "exploit_id": "CVE-2020-11978",
+    "exploit_metadata": {
+      "id": "CVE-2020-11978",
+      "exploit": "linux/http/apache_airflow_dag_rce",
+      "payload": "cmd/unix/bind_netcat",
+      "references": "[['EDB', '49927'], ['CVE', '2020-11978'], ['CVE', '2020-13927'], ['URL', 'https://github.com/pberba/CVE-2020-11978/'], ['URL', 'https://lists.apache.org/thread/cn57zwylxsnzjyjztwqxpmly0x9q5ljx'], ['URL', 'https://lists.apache.org/thread/mq1bpqf3ztg1nhyc5qbrjobfrzttwx1d']]",
+      "shell_type": [],
+      "source": "warning",
+      "start_timestamp": "2024-09-25 10:26:05.519128+00:00",
+      "end_timestamp": "2024-09-25 10:26:11.069921+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-09-25T10:26:08.222544+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "40437",
+            "8080"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://github.com/pberba/CVE-2020-11978/",
+            "https://lists.apache.org/thread/cn57zwylxsnzjyjztwqxpmly0x9q5ljx",
+            "https://lists.apache.org/thread/mq1bpqf3ztg1nhyc5qbrjobfrzttwx1d"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n del CVE-2020-11978, un RCE en Apache Airflow. Los paquetes de red implicados provienen de la IP 172.19.0.3 y se dirigieron a la IP 172.19.0.2 en el puerto 8080. No se encontraron comandos o payloads en los paquetes de red analizados."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:26:08.222563+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "8080",
+            "40437"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://github.com/pberba/CVE-2020-11978/",
+            "https://lists.apache.org/thread/cn57zwylxsnzjyjztwqxpmly0x9q5ljx",
+            "https://lists.apache.org/thread/mq1bpqf3ztg1nhyc5qbrjobfrzttwx1d"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo (RCE) utilizando el exploit apache_airflow_dag_rce (CVE-2020-11978). Los paquetes de red implicados indican una comunicaci\u00f3n entre las IPs 172.19.0.2 y 172.19.0.3 a trav\u00e9s de los puertos 8080 y 40437 respectivamente. No se identificaron comandos o payloads espec\u00edficos en los paquetes de red proporcionados."
+        }
+      }
+    ],
+    "resumen_exploit": "Se identific\u00f3 un intento de explotaci\u00f3n del CVE-2020-11978, un RCE en Apache Airflow, utilizando el exploit apache_airflow_dag_rce. Los paquetes de red implicados indican una comunicaci\u00f3n bidireccional entre las IPs 172.19.0.3 y 172.19.0.2, utilizando los puertos 8080 y 40437 respectivamente. Las URLs asociadas al exploit fueron identificadas en los paquetes, incluyendo referencias a GitHub y a hilos de discusi\u00f3n en lists.apache.org. A pesar de la evidencia de la actividad de explotaci\u00f3n, no se encontraron comandos o payloads espec\u00edficos en los paquetes de red analizados."
+  },
+  {
+    "exploit_id": "CVE-2020-13927",
+    "exploit_metadata": {
+      "id": "CVE-2020-13927",
+      "exploit": "linux/http/apache_airflow_dag_rce",
+      "payload": "cmd/unix/bind_netcat",
+      "references": "[['EDB', '49927'], ['CVE', '2020-11978'], ['CVE', '2020-13927'], ['URL', 'https://github.com/pberba/CVE-2020-11978/'], ['URL', 'https://lists.apache.org/thread/cn57zwylxsnzjyjztwqxpmly0x9q5ljx'], ['URL', 'https://lists.apache.org/thread/mq1bpqf3ztg1nhyc5qbrjobfrzttwx1d']]",
+      "shell_type": [],
+      "source": "warning",
+      "start_timestamp": "2024-09-25 10:26:24.252371+00:00",
+      "end_timestamp": "2024-09-25 10:26:29.836426+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-09-25T10:26:26.976418+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "37531",
+            "8080"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://github.com/pberba/CVE-2020-11978/",
+            "https://lists.apache.org/thread/cn57zwylxsnzjyjztwqxpmly0x9q5ljx",
+            "https://lists.apache.org/thread/mq1bpqf3ztg1nhyc5qbrjobfrzttwx1d"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2020-13927 en Apache Airflow. No se observaron comandos o payloads espec\u00edficos en los paquetes de red analizados."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:26:26.976439+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "8080",
+            "37531"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://github.com/pberba/CVE-2020-11978/",
+            "https://lists.apache.org/thread/cn57zwylxsnzjyjztwqxpmly0x9q5ljx",
+            "https://lists.apache.org/thread/mq1bpqf3ztg1nhyc5qbrjobfrzttwx1d"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo (RCE) en Apache Airflow. Los paquetes de red implicados no contienen datos de carga \u00fatil, lo que sugiere que el ataque puede haber sido interrumpido o no completado. Las direcciones IP y los puertos implicados sugieren que el ataque se origin\u00f3 desde el mismo host o red interna."
+        }
+      }
+    ],
+    "resumen_exploit": "Se identific\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2020-13927 en Apache Airflow, con un posible ataque de ejecuci\u00f3n remota de c\u00f3digo (RCE). Las direcciones IP implicadas fueron 172.19.0.3 y 172.19.0.2, utilizando los puertos 37531 y 8080. No se detectaron payloads o comandos espec\u00edficos en los paquetes de red analizados, lo que sugiere que el ataque pudo haber sido interrumpido o no completado. Las direcciones IP y los puertos implicados indican que el ataque se origin\u00f3 desde el mismo host o red interna. Se encontraron referencias a la vulnerabilidad en las URLs: https://github.com/pberba/CVE-2020-11978/, https://lists.apache.org/thread/cn57zwylxsnzjyjztwqxpmly0x9q5ljx, https://lists.apache.org/thread/mq1bpqf3ztg1nhyc5qbrjobfrzttwx1d."
+  },
+  {
+    "exploit_id": "CVE-2021-25646",
+    "exploit_metadata": {
+      "id": "CVE-2021-25646",
+      "exploit": "linux/http/apache_druid_js_rce",
+      "payload": "generic/custom",
+      "references": "[['CVE', '2021-25646'], ['URL', 'https://lists.apache.org/thread.html/rfda8a3aa6ac06a80c5cbfdeae0fc85f88a5984e32ea05e6dda46f866%40%3Cdev.druid.apache.org%3E'], ['URL', 'https://github.com/yaunsky/cve-2021-25646/blob/main/cve-2021-25646.py']]",
+      "shell_type": [],
+      "source": "warning",
+      "start_timestamp": "2024-09-25 10:26:43.020488+00:00",
+      "end_timestamp": "2024-09-25 10:26:48.169930+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-09-25T10:26:45.446511+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "36943",
+            "8888"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://lists.apache.org/thread.html/rfda8a3aa6ac06a80c5cbfdeae0fc85f88a5984e32ea05e6dda46f866%40%3Cdev.druid.apache.org%3E",
+            "https://github.com/yaunsky/cve-2021-25646/blob/main/cve-2021-25646.py"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo a trav\u00e9s del exploit apache_druid_js_rce (CVE-2021-25646) en un servidor Apache Druid. Las direcciones IP y los puertos implicados sugieren una comunicaci\u00f3n interna entre los servicios. No se identificaron comandos o payloads espec\u00edficos en los paquetes de red proporcionados."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:26:45.446532+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "8888",
+            "36943"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://lists.apache.org/thread.html/rfda8a3aa6ac06a80c5cbfdeae0fc85f88a5984e32ea05e6dda46f866%40%3Cdev.druid.apache.org%3E",
+            "https://github.com/yaunsky/cve-2021-25646/blob/main/cve-2021-25646.py"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo en Apache Druid (CVE-2021-25646). Las direcciones IP 172.19.0.2 y 172.19.0.3 estuvieron involucradas, utilizando los puertos 8888 y 36943 respectivamente. No se encontraron payloads en las trazas proporcionadas."
+        }
+      }
+    ],
+    "resumen_exploit": "Se identific\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo mediante el exploit CVE-2021-25646 en un servidor Apache Druid. Las direcciones IP implicadas fueron 172.19.0.3 y 172.19.0.2, utilizando los puertos 36943 y 8888 respectivamente, lo que sugiere una comunicaci\u00f3n interna entre los servicios. No se detectaron payloads o comandos espec\u00edficos en los paquetes de red proporcionados. Las URLs asociadas al ataque apuntan a un hilo de discusi\u00f3n en Apache y a un script de Python en GitHub relacionado con el exploit."
+  },
+  {
+    "exploit_id": "CVE-2022-33891",
+    "exploit_metadata": {
+      "id": "CVE-2022-33891",
+      "exploit": "linux/http/apache_spark_rce_cve_2022_33891",
+      "payload": "cmd/unix/bind_netcat",
+      "references": "[['URL', 'https://lists.apache.org/thread/p847l3kopoo5bjtmxrcwk21xp6tjxqlc'], ['URL', 'https://attackerkb.com/topics/5FyKBES4BL/cve-2022-33891'], ['CVE', '2022-33891']]",
+      "shell_type": [],
+      "source": "warning",
+      "start_timestamp": "2024-09-25 10:27:35.316106+00:00",
+      "end_timestamp": "2024-09-25 10:27:40.459313+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-09-25T10:27:37.659308+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "42393",
+            "8080"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://lists.apache.org/thread/p847l3kopoo5bjtmxrcwk21xp6tjxqlc",
+            "https://attackerkb.com/topics/5FyKBES4BL/cve-2022-33891"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo (RCE) en Apache Spark, identificado como CVE-2022-33891. Las direcciones IP y los puertos implicados sugieren una comunicaci\u00f3n entre dos nodos internos. No se identificaron comandos o payloads espec\u00edficos en los paquetes de red proporcionados."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:27:37.659332+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "8080",
+            "42393"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://lists.apache.org/thread/p847l3kopoo5bjtmxrcwk21xp6tjxqlc",
+            "https://attackerkb.com/topics/5FyKBES4BL/cve-2022-33891"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo en Apache Spark (CVE-2022-33891). El ataque parece haberse originado desde la IP 172.19.0.2 utilizando el puerto 8080 y dirigido a la IP 172.19.0.3 en el puerto 42393. No se identificaron comandos o payloads espec\u00edficos en los paquetes de red analizados."
+        }
+      }
+    ],
+    "resumen_exploit": "Se identific\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo (RCE) en Apache Spark, catalogado como CVE-2022-33891, durante el intervalo de tiempo entre las 10:27:35 y las 10:27:40 del 25 de septiembre de 2024. El ataque parece haberse originado desde la direcci\u00f3n IP 172.19.0.2 utilizando el puerto 8080 y dirigido a la direcci\u00f3n IP 172.19.0.3 en el puerto 42393. Las comunicaciones entre estos dos nodos internos se realizaron mediante el payload cmd/unix/bind_netcat. No se identificaron comandos o payloads espec\u00edficos en los paquetes de red analizados. Las URLs asociadas al ataque son \"https://lists.apache.org/thread/p847l3kopoo5bjtmxrcwk21xp6tjxqlc\" y \"https://attackerkb.com/topics/5FyKBES4BL/cve-2022-33891\"."
+  },
+  {
+    "exploit_id": "CVE-2022-36804",
+    "exploit_metadata": {
+      "id": "CVE-2022-36804",
+      "exploit": "linux/http/bitbucket_git_cmd_injection",
+      "payload": "generic/custom",
+      "references": "[['URL', 'https://blog.assetnote.io/2022/09/14/rce-in-bitbucket-server/'], ['URL', 'https://confluence.atlassian.com/bitbucketserver/bitbucket-server-and-data-center-advisory-2022-08-24-1155489835.html'], ['URL', 'https://attackerkb.com/topics/iJIxJ6JUow/cve-2022-36804/rapid7-analysis'], ['URL', 'https://www.rapid7.com/blog/post/2022/09/20/cve-2022-36804-easily-exploitable-vulnerability-in-atlassian-bitbucket-server-and-data-center/'], ['CVE', '2022-36804']]",
+      "shell_type": [],
+      "source": "warning",
+      "start_timestamp": "2024-09-25 10:28:27.751209+00:00",
+      "end_timestamp": "2024-09-25 10:28:32.899310+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-09-25T10:28:30.188273+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "43419",
+            "7990"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://blog.assetnote.io/2022/09/14/rce-in-bitbucket-server/",
+            "https://confluence.atlassian.com/bitbucketserver/bitbucket-server-and-data-center-advisory-2022-08-24-1155489835.html",
+            "https://attackerkb.com/topics/iJIxJ6JUow/cve-2022-36804/rapid7-analysis",
+            "https://www.rapid7.com/blog/post/2022/09/20/cve-2022-36804-easily-exploitable-vulnerability-in-atlassian-bitbucket-server-and-data-center/"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2022-36804 en un servidor Bitbucket. Los paquetes de red implicados no contienen datos de carga \u00fatil, lo que sugiere que el ataque puede haber sido bloqueado o no completado. Las direcciones IP y los puertos implicados sugieren una comunicaci\u00f3n entre dos servicios internos, posiblemente en un entorno de contenedor."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:28:30.188292+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "7990",
+            "43419"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://blog.assetnote.io/2022/09/14/rce-in-bitbucket-server/",
+            "https://confluence.atlassian.com/bitbucketserver/bitbucket-server-and-data-center-advisory-2022-08-24-1155489835.html",
+            "https://attackerkb.com/topics/iJIxJ6JUow/cve-2022-36804/rapid7-analysis",
+            "https://www.rapid7.com/blog/post/2022/09/20/cve-2022-36804-easily-exploitable-vulnerability-in-atlassian-bitbucket-server-and-data-center/"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de inyecci\u00f3n de comandos en Bitbucket. Las direcciones IP y los puertos implicados sugieren una comunicaci\u00f3n entre dos servicios internos. No se encontraron comandos o payloads espec\u00edficos en los paquetes de red proporcionados."
+        }
+      }
+    ],
+    "resumen_exploit": "Se identific\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2022-36804 en un servidor Bitbucket, con las direcciones IP 172.19.0.3 y 172.19.0.2 y los puertos 43419 y 7990 implicados en la comunicaci\u00f3n. A pesar de no detectarse datos de carga \u00fatil en los paquetes de red, se sugiere que el ataque pudo haber sido bloqueado o no completado. Se observ\u00f3 una posible inyecci\u00f3n de comandos en Bitbucket, aunque no se encontraron comandos o payloads espec\u00edficos en los paquetes de red proporcionados. Las URLs asociadas al ataque apuntan a informaci\u00f3n detallada sobre la vulnerabilidad explotada y su an\u00e1lisis."
+  },
+  {
+    "exploit_id": "CVE-2021-1497",
+    "exploit_metadata": {
+      "id": "CVE-2021-1497",
+      "exploit": "linux/http/cisco_hyperflex_hx_data_platform_cmd_exec",
+      "payload": "cmd/unix/bind_netcat",
+      "references": "[['CVE', '2021-1497'], ['CVE', '2021-1498'], ['URL', 'https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR'], ['URL', 'https://attackerkb.com/assessments/4f532147-b27b-4079-aed1-5cfdc402cf5c'], ['URL', 'https://twitter.com/ptswarm/status/1390300625129201664']]",
+      "shell_type": [],
+      "source": "warning",
+      "start_timestamp": "2024-09-25 10:30:13.192022+00:00",
+      "end_timestamp": "2024-09-25 10:30:18.350882+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-09-25T10:30:15.562811+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "36509",
+            "80"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR",
+            "https://attackerkb.com/assessments/4f532147-b27b-4079-aed1-5cfdc402cf5c",
+            "https://twitter.com/ptswarm/status/1390300625129201664"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n de comandos en la plataforma de datos Cisco Hyperflex HX (CVE-2021-1497). Los paquetes de red implicados no contienen datos de carga \u00fatil, lo que sugiere que el ataque puede haber sido inicial o exploratorio."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:30:15.563040+00:00",
+        "protocol": "HTTP",
+        "payload_text": "POST /storfs-asup HTTP/1.1..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device..User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36..Content-Type: application/x-www-form-urlencoded..Content-Length: 0....",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "36509",
+            "80"
+          ],
+          "payloads": [
+            "POST /storfs-asup HTTP/1.1..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device..User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36..Content-Type: application/x-www-form-urlencoded..Content-Length: 0...."
+          ],
+          "comandos": [],
+          "urls": [
+            "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR",
+            "https://attackerkb.com/assessments/4f532147-b27b-4079-aed1-5cfdc402cf5c",
+            "https://twitter.com/ptswarm/status/1390300625129201664"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2021-1497 en un dispositivo Cisco HyperFlex. El atacante intent\u00f3 enviar una solicitud POST a '/storfs-asup' sin contenido. La solicitud se origin\u00f3 desde la IP 172.19.0.3 y se dirigi\u00f3 a la IP 172.19.0.2 en el puerto 80."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:30:15.563421+00:00",
+        "protocol": "HTTP",
+        "payload_text": "HTTP/1.1 404 Not Found..Date: Wed, 25 Sep 2024 10:30:15 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 330..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /storfs-asup was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device Port 80</address>.</body></html>.",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "80",
+            "36509"
+          ],
+          "payloads": [
+            "HTTP/1.1 404 Not Found..Date: Wed, 25 Sep 2024 10:30:15 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 330..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /storfs-asup was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device Port 80</address>.</body></html>."
+          ],
+          "comandos": [],
+          "urls": [
+            "/storfs-asup"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n del CVE-2021-1497, que es una vulnerabilidad de ejecuci\u00f3n remota de comandos en Cisco HyperFlex. El atacante intent\u00f3 acceder a la URL /storfs-asup, que no se encontr\u00f3 en el servidor. El servidor implicado es Apache/2.2.8 (Ubuntu) DAV/2."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:30:15.562841+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "80",
+            "36509"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR",
+            "https://attackerkb.com/assessments/4f532147-b27b-4079-aed1-5cfdc402cf5c",
+            "https://twitter.com/ptswarm/status/1390300625129201664"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n de comandos en la plataforma de datos Cisco Hyperflex (CVE-2021-1497). Los paquetes de red implicados no contienen datos de carga \u00fatil, lo que sugiere que el ataque puede haber sido interrumpido o no haber sido exitoso. Las direcciones IP y los puertos implicados sugieren que el ataque se origin\u00f3 desde el interior de la red."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:30:15.563059+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "80",
+            "36509"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR",
+            "https://attackerkb.com/assessments/4f532147-b27b-4079-aed1-5cfdc402cf5c",
+            "https://twitter.com/ptswarm/status/1390300625129201664"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n de comandos en la plataforma de datos Cisco Hyperflex (CVE-2021-1497). Los paquetes de red implicados no contienen datos de carga \u00fatil, lo que sugiere que el ataque puede haber sido interrumpido o no haber sido exitoso. Las IPs y puertos implicados sugieren que el ataque se origin\u00f3 desde la IP 172.19.0.2 en el puerto 80 y se dirigi\u00f3 a la IP 172.19.0.3 en el puerto 36509."
+        }
+      }
+    ],
+    "resumen_exploit": "Se identific\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2021-1497 en la plataforma de datos Cisco Hyperflex HX. El ataque, originado desde la IP 172.19.0.3 y dirigido a la IP 172.19.0.2 en el puerto 80, intent\u00f3 ejecutar comandos remotos a trav\u00e9s de una solicitud POST sin contenido a '/storfs-asup'. Sin embargo, el servidor Apache/2.2.8 (Ubuntu) DAV/2 respondi\u00f3 con un error 404, indicando que la URL /storfs-asup no se encontraba en el servidor. Los paquetes de red no conten\u00edan datos de carga \u00fatil, lo que sugiere que el ataque pudo haber sido exploratorio o no exitoso."
+  },
+  {
+    "exploit_id": "CVE-2021-1498",
+    "exploit_metadata": {
+      "id": "CVE-2021-1498",
+      "exploit": "linux/http/cisco_hyperflex_hx_data_platform_cmd_exec",
+      "payload": "cmd/unix/bind_netcat",
+      "references": "[['CVE', '2021-1497'], ['CVE', '2021-1498'], ['URL', 'https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR'], ['URL', 'https://attackerkb.com/assessments/4f532147-b27b-4079-aed1-5cfdc402cf5c'], ['URL', 'https://twitter.com/ptswarm/status/1390300625129201664']]",
+      "shell_type": [],
+      "source": "warning",
+      "start_timestamp": "2024-09-25 10:30:31.080533+00:00",
+      "end_timestamp": "2024-09-25 10:30:36.235216+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-09-25T10:30:33.462665+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "44587",
+            "80"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR",
+            "https://attackerkb.com/assessments/4f532147-b27b-4079-aed1-5cfdc402cf5c",
+            "https://twitter.com/ptswarm/status/1390300625129201664"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n del CVE-2021-1498, un fallo de ejecuci\u00f3n de comandos en Cisco HyperFlex HX Data Platform. No se observaron comandos o payloads espec\u00edficos en los paquetes de red capturados."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:30:33.462887+00:00",
+        "protocol": "HTTP",
+        "payload_text": "GET /storfs-asup HTTP/1.1..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device..User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36....",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "44587",
+            "80"
+          ],
+          "payloads": [
+            "GET /storfs-asup HTTP/1.1..Host: tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device..User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 14_0) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36...."
+          ],
+          "comandos": [],
+          "urls": [
+            "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR",
+            "https://attackerkb.com/assessments/4f532147-b27b-4079-aed1-5cfdc402cf5c",
+            "https://twitter.com/ptswarm/status/1390300625129201664"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n del CVE-2021-1498, un fallo de ejecuci\u00f3n de comandos en la plataforma de datos Cisco HyperFlex HX. El atacante intent\u00f3 acceder al recurso '/storfs-asup' a trav\u00e9s del protocolo HTTP."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:30:33.463208+00:00",
+        "protocol": "HTTP",
+        "payload_text": "HTTP/1.1 404 Not Found..Date: Wed, 25 Sep 2024 10:30:33 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 330..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /storfs-asup was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device Port 80</address>.</body></html>.",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "80",
+            "44587"
+          ],
+          "payloads": [
+            "HTTP/1.1 404 Not Found..Date: Wed, 25 Sep 2024 10:30:33 GMT..Server: Apache/2.2.8 (Ubuntu) DAV/2..Content-Length: 330..Content-Type: text/html; charset=iso-8859-1....<!DOCTYPE HTML PUBLIC \\\"-//IETF//DTD HTML 2.0//EN\\\">.<html><head>.<title>404 Not Found</title>.</head><body>.<h1>Not Found</h1>.<p>The requested URL /storfs-asup was not found on this server.</p>.<hr>.<address>Apache/2.2.8 (Ubuntu) DAV/2 Server at tanuki-292fb064-6f2e-4883-93b7-dd7d0432c227-device Port 80</address>.</body></html>"
+          ],
+          "comandos": [],
+          "urls": [
+            "/storfs-asup"
+          ],
+          "observaciones": "Se intent\u00f3 acceder a la URL /storfs-asup en el servidor Apache/2.2.8 (Ubuntu) DAV/2, pero no se encontr\u00f3. El servidor respondi\u00f3 con un error 404. El ataque parece estar relacionado con el exploit CVE-2021-1498, que permite la ejecuci\u00f3n de comandos en Cisco HyperFlex HX Data Platform."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:30:33.462690+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "80",
+            "44587"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR",
+            "https://attackerkb.com/assessments/4f532147-b27b-4079-aed1-5cfdc402cf5c",
+            "https://twitter.com/ptswarm/status/1390300625129201664"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2021-1498, que permite la ejecuci\u00f3n remota de comandos en Cisco HyperFlex HX. No se identificaron comandos espec\u00edficos en los paquetes de red analizados."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:30:33.462904+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "80",
+            "44587"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://tools.cisco.com/security/center/content/CiscoSecurityAdvisory/cisco-sa-hyperflex-rce-TjjNrkpR",
+            "https://attackerkb.com/assessments/4f532147-b27b-4079-aed1-5cfdc402cf5c",
+            "https://twitter.com/ptswarm/status/1390300625129201664"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n de comandos en la plataforma de datos Cisco Hyperflex HX (CVE-2021-1498). Los paquetes de red implican una comunicaci\u00f3n entre las IPs 172.19.0.2 y 172.19.0.3 a trav\u00e9s de los puertos 80 y 44587 respectivamente. No se identificaron cargas \u00fatiles, comandos o credenciales en los paquetes de red proporcionados."
+        }
+      }
+    ],
+    "resumen_exploit": "Se identific\u00f3 un intento de explotaci\u00f3n del CVE-2021-1498, una vulnerabilidad de ejecuci\u00f3n de comandos en la plataforma de datos Cisco HyperFlex HX. Los paquetes de red implican una comunicaci\u00f3n entre las IPs 172.19.0.2 y 172.19.0.3 a trav\u00e9s de los puertos 80 y 44587. El atacante intent\u00f3 acceder al recurso '/storfs-asup' v\u00eda HTTP, pero el servidor Apache/2.2.8 (Ubuntu) DAV/2 respondi\u00f3 con un error 404, indicando que el recurso no se encontr\u00f3. A pesar de la actividad sospechosa, no se identificaron cargas \u00fatiles, comandos o credenciales en los paquetes de red proporcionados."
+  },
+  {
+    "exploit_id": "CVE-2019-1653",
+    "exploit_metadata": {
+      "id": "CVE-2019-1653",
+      "exploit": "linux/http/cisco_rv32x_rce",
+      "payload": "generic/custom",
+      "references": "[['CVE', '2019-1653'], ['CVE', '2019-1652'], ['EDB', '46243'], ['BID', '106728'], ['BID', '106732'], ['URL', 'https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-002/-cisco-rv320-unauthenticated-configuration-export'], ['URL', 'https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-004/-cisco-rv320-command-injection']]",
+      "shell_type": [],
+      "source": "warning",
+      "start_timestamp": "2024-09-25 10:30:49.103806+00:00",
+      "end_timestamp": "2024-09-25 10:31:15.510967+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-09-25T10:30:51.435213+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "40777",
+            "8007"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-002/-cisco-rv320-unauthenticated-configuration-export",
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-004/-cisco-rv320-command-injection"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2019-1653 en un dispositivo Cisco RV32X. No se observaron comandos o payloads espec\u00edficos en los paquetes de red capturados."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:31:03.761941+00:00",
+        "protocol": "SMB",
+        "payload_text": "...V....... DGDFEFDHDGDCEEDCDFEBDCDHCACACAAA. FHEPFCELEHFCEPFFFACACACACACACABO.SMB%..............................J...................J.V.........[.\\MAILSLOT\\BROWSE.....65E762D25A27...........U65e762d25a27 server (Samba 3.0.20-Debian).",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.255.255"
+          ],
+          "puertos": [],
+          "payloads": [
+            "...V....... DGDFEFDHDGDCEEDCDFEBDCDHCACACAAA. FHEPFCELEHFCEPFFFACACACACACACABO.SMB%..............................J...................J.V.........[.\\\\MAILSLOT\\\\BROWSE.....65E762D25A27...........U65e762d25a27 server (Samba 3.0.20-Debian)."
+          ],
+          "comandos": [],
+          "urls": [
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-002/-cisco-rv320-unauthenticated-configuration-export",
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-004/-cisco-rv320-command-injection"
+          ],
+          "observaciones": "Se detect\u00f3 un tr\u00e1fico de red sospechoso relacionado con el protocolo SMB. El paquete de datos parece contener una cadena hexadecimal que podr\u00eda ser un indicador de compromiso. La cadena de texto 'MAILSLOT\\BROWSE' sugiere una posible exploraci\u00f3n de recursos compartidos en la red. La cadena 'Samba 3.0.20-Debian' indica la versi\u00f3n del software Samba que se est\u00e1 utilizando, lo que podr\u00eda ser \u00fatil para identificar posibles vulnerabilidades."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:30:51.435230+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "8007",
+            "40777"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-002/-cisco-rv320-unauthenticated-configuration-export",
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-004/-cisco-rv320-command-injection"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo (RCE) en un dispositivo Cisco RV32X, utilizando el exploit CVE-2019-1653. No se encontraron comandos o payloads espec\u00edficos en los paquetes de red analizados. Las IPs y puertos implicados sugieren una comunicaci\u00f3n entre dos nodos internos de la red."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:31:03.762136+00:00",
+        "protocol": "SMB",
+        "payload_text": "...W....... DGDFEFDHDGDCEEDCDFEBDCDHCACACAAA. ABACFPFPENFDECFCEPFHFDEFFPFPACAB.SMB%..............................-...................-.V.........>.\\MAILSLOT\\BROWSE.....WORKGROUP..............U65E762D25A27.",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.255.255"
+          ],
+          "puertos": [],
+          "payloads": [
+            "DGDFEFDHDGDCEEDCDFEBDCDHCACACAAA",
+            "ABACFPFPENFDECFCEPFHFDEFFPFPACAB"
+          ],
+          "comandos": [
+            "\\\\MAILSLOT\\\\BROWSE"
+          ],
+          "urls": [
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-002/-cisco-rv320-unauthenticated-configuration-export",
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-004/-cisco-rv320-command-injection"
+          ],
+          "observaciones": "Se detect\u00f3 un posible exploit (CVE-2019-1653) que apunta a dispositivos Cisco RV32x. El atacante parece haber utilizado el protocolo SMB para enviar comandos maliciosos. Se identific\u00f3 un comando (\\\\MAILSLOT\\\\BROWSE) que se utiliza com\u00fanmente en ataques de enumeraci\u00f3n de red. Adem\u00e1s, se observ\u00f3 tr\u00e1fico de red desde y hacia las direcciones IP 172.19.0.2 y 172.19.255.255."
+        }
+      }
+    ],
+    "resumen_exploit": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2019-1653 en un dispositivo Cisco RV32X, utilizando IPs 172.19.0.3 y 172.19.0.2, y puertos 40777 y 8007. No se observaron comandos o payloads espec\u00edficos en los paquetes de red capturados. Se identific\u00f3 tr\u00e1fico de red sospechoso relacionado con el protocolo SMB, incluyendo una cadena hexadecimal y la cadena 'MAILSLOT\\\\BROWSE', que sugiere una posible exploraci\u00f3n de recursos compartidos en la red. Se detect\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo (RCE) y se identific\u00f3 un comando (\\\\\\\\MAILSLOT\\\\\\\\BROWSE) com\u00fanmente utilizado en ataques de enumeraci\u00f3n de red."
+  },
+  {
+    "exploit_id": "CVE-2019-1652",
+    "exploit_metadata": {
+      "id": "CVE-2019-1652",
+      "exploit": "linux/http/cisco_rv32x_rce",
+      "payload": "generic/custom",
+      "references": "[['CVE', '2019-1653'], ['CVE', '2019-1652'], ['EDB', '46243'], ['BID', '106728'], ['BID', '106732'], ['URL', 'https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-002/-cisco-rv320-unauthenticated-configuration-export'], ['URL', 'https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-004/-cisco-rv320-command-injection']]",
+      "shell_type": [],
+      "source": "warning",
+      "start_timestamp": "2024-09-25 10:31:28.058448+00:00",
+      "end_timestamp": "2024-09-25 10:31:54.479832+00:00"
+    },
+    "iocs": [
+      {
+        "packet_timestamp": "2024-09-25T10:31:30.403836+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.3",
+            "172.19.0.2"
+          ],
+          "puertos": [
+            "43187",
+            "8007"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-002/-cisco-rv320-unauthenticated-configuration-export",
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-004/-cisco-rv320-command-injection"
+          ],
+          "observaciones": "Se detect\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2019-1652 en un dispositivo Cisco RV32X. No se observaron comandos o payloads espec\u00edficos en las trazas de paquetes proporcionadas."
+        }
+      },
+      {
+        "packet_timestamp": "2024-09-25T10:31:30.403856+00:00",
+        "protocol": "UNKNOWN",
+        "payload_text": "",
+        "iocs": {
+          "ips": [
+            "172.19.0.2",
+            "172.19.0.3"
+          ],
+          "puertos": [
+            "8007",
+            "43187"
+          ],
+          "payloads": [],
+          "comandos": [],
+          "urls": [
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-002/-cisco-rv320-unauthenticated-configuration-export",
+            "https://www.redteam-pentesting.de/en/advisories/rt-sa-2018-004/-cisco-rv320-command-injection"
+          ],
+          "observaciones": "Se detect\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo (RCE) contra un dispositivo Cisco RV32X. Los paquetes de red implicados no contienen datos de carga \u00fatil, lo que sugiere que el ataque puede haber sido un intento de sondeo o exploraci\u00f3n. Las direcciones IP y los puertos implicados pueden haber sido utilizados por el atacante para intentar establecer una conexi\u00f3n con el dispositivo objetivo."
+        }
+      }
+    ],
+    "resumen_exploit": "Se identific\u00f3 un intento de explotaci\u00f3n de la vulnerabilidad CVE-2019-1652 en un dispositivo Cisco RV32X, utilizando las direcciones IP 172.19.0.3 y 172.19.0.2 y los puertos 43187 y 8007. Aunque no se observaron comandos o payloads espec\u00edficos en las trazas de paquetes proporcionadas, se detect\u00f3 un posible ataque de ejecuci\u00f3n remota de c\u00f3digo (RCE). Los paquetes de red implicados no contienen datos de carga \u00fatil, lo que sugiere que el ataque puede haber sido un intento de sondeo o exploraci\u00f3n. Las direcciones IP y los puertos implicados pueden haber sido utilizados por el atacante para intentar establecer una conexi\u00f3n con el dispositivo objetivo."
+  }
+]
